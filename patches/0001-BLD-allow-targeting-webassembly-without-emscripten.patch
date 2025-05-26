@@ -1,0 +1,27 @@
+From 5e2f0899ff5793e794ec626bcfc48d440efc12e6 Mon Sep 17 00:00:00 2001
+From: Zebreus <zebreus@zebre.us>
+Date: Mon, 26 May 2025 18:03:41 +0200
+Subject: [PATCH] BLD: allow targeting webassembly without emscripten
+
+---
+ numpy/_core/include/numpy/npy_cpu.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/numpy/_core/include/numpy/npy_cpu.h b/numpy/_core/include/numpy/npy_cpu.h
+index a19f8e6bbd..2af3f79eab 100644
+--- a/numpy/_core/include/numpy/npy_cpu.h
++++ b/numpy/_core/include/numpy/npy_cpu.h
+@@ -106,8 +106,9 @@
+     #define NPY_CPU_RISCV64
+ #elif defined(__loongarch__)
+     #define NPY_CPU_LOONGARCH
+-#elif defined(__EMSCRIPTEN__)
++#elif defined(__EMSCRIPTEN__) || defined(__wasm__)
+     /* __EMSCRIPTEN__ is defined by emscripten: an LLVM-to-Web compiler */
++    /* __wasm__ is defined by clang when targeting wasm */
+     #define NPY_CPU_WASM
+ #else
+     #error Unknown CPU, please report this to numpy maintainers with \
+-- 
+2.48.1
+
