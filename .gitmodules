@@ -16,3 +16,6 @@
 [submodule "tzdata"]
 	path = tzdata
 	url = https://github.com/python/tzdata.git
+[submodule "six"]
+	path = six
+	url = https://github.com/benjaminp/six.git
