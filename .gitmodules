@@ -4,3 +4,6 @@
 [submodule "markupsafe"]
 	path = markupsafe
 	url = https://github.com/pallets/markupsafe.git
+[submodule "pandas"]
+	path = pandas
+	url = https://github.com/pandas-dev/pandas.git
