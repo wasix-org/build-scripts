@@ -27,6 +27,9 @@ for arg in "${PASSED_ARGS[@]}"; do
         -c|-S|-E)
             run_linker=false
             ;;
+        --version)
+            run_linker=false
+            ;;
         -shared|--shared)
             shared_library=true
             ;;
