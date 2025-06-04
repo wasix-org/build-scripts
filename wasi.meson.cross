@@ -1,23 +1,16 @@
 [host_machine] 
 system = 'wasi'
 cpu_family = 'wasm32'
-
 cpu = 'wasm32'
 endian = 'little'
 
 [binaries]
-c =       '@DIRNAME@/clang.sh'
-cpp =       '@DIRNAME@/clang++.sh'
-ar =      'llvm-ar-19'
-ld =      'wasm-ld-19'
+c = '@DIRNAME@/clang.sh'
+cpp = '@DIRNAME@/clang++.sh'
+ar = 'llvm-ar-19'
+ld = 'wasm-ld-19'
 cython = '/usr/bin/cython'
 exe_wrapper = 'wasmer'
-
-[built-in options]
-c_args=     [ '--target=wasm32-unknown-wasi', '--sysroot', '/home/lennart/Documents/wasix-libc/sysroot', '-matomics', '-mbulk-memory', '-mmutable-globals', '-pthread', '-mthread-model', 'posix', '-ftls-model=local-exec', '-fno-trapping-math', '-D_WASI_EMULATED_MMAN', '-D_WASI_EMULATED_SIGNAL', '-D_WASI_EMULATED_PROCESS_CLOCKS', '-fvisibility=default', '-fPIC'] 
-cpp_args=     [ '--target=wasm32-unknown-wasi', '--sysroot', '/home/lennart/Documents/wasix-libc/sysroot', '-matomics', '-mbulk-memory', '-mmutable-globals', '-pthread', '-mthread-model', 'posix', '-ftls-model=local-exec', '-fno-trapping-math', '-D_WASI_EMULATED_MMAN', '-D_WASI_EMULATED_SIGNAL', '-D_WASI_EMULATED_PROCESS_CLOCKS', '-fvisibility=default', '-fPIC'] 
-c_link_args = [ '--target=wasm32-unknown-wasi', '--sysroot', '/home/lennart/Documents/wasix-libc/sysroot', '-Wl,--extra-features=atomics', '-Wl,--extra-features=bulk-memory', '-Wl,--extra-features=mutable-globals', '-Wl,--export=__wasm_call_ctors', '-Wl,--export-if-defined=__wasm_apply_data_relocs', '-Wl,--experimental-pic', '-Wl,--shared-memory', '-Wl,--unresolved-symbols=import-dynamic', '--shared', '--no-standard-libraries', '-nostdlib++', '-Wl,--no-entry']
-cpp_link_args = [ '--target=wasm32-unknown-wasi', '--sysroot', '/home/lennart/Documents/wasix-libc/sysroot', '-Wl,--extra-features=atomics', '-Wl,--extra-features=bulk-memory', '-Wl,--extra-features=mutable-globals', '-Wl,--export=__wasm_call_ctors', '-Wl,--export-if-defined=__wasm_apply_data_relocs', '-Wl,--experimental-pic', '-Wl,--shared-memory', '-Wl,--unresolved-symbols=import-dynamic', '--shared', '--no-standard-libraries', '-nostdlib++', '-Wl,--no-entry']
 
 [properties]
 needs_exe_wrapper = true
