@@ -1,5 +1,5 @@
 ifndef WASIX_SYSROOT
-	$(error You need to define WASIX_SYSROOT)
+$(error You need to define WASIX_SYSROOT)
 endif
 
 CROSSFILE=$(shell pwd)/wasi.meson.cross
@@ -32,6 +32,11 @@ dateutil: Makefile
 tzdata: Makefile
 	rm -rf tzdata
 	git restore tzdata
+	git submodule update --init --recursive
+
+pandas: Makefile wasi.meson.cross
+	rm -rf pandas
+	git restore pandas
 	git submodule update --init --recursive
 
 python.webc:
@@ -73,6 +78,12 @@ dateutil_wasm32.whl: dateutil cross-venv
 tzdata_wasm32.whl: tzdata cross-venv
 	source ./cross-venv/bin/activate && cd tzdata && python3 -m build --wheel
 	cp tzdata/dist/*.whl tzdata_wasm32.whl
+
+# Currently broken, because numpy is missing. The binary in the repo is build manually.
+# Build pandas manually by compiling a native numpy and extracting the wheel into the cross env
+pandas_wasm32.whl: pandas cross-venv
+	source ./cross-venv/bin/activate && cd pandas && CC=$$(pwd)/../clang.sh CXX=$$(pwd)/../clang++.sh python3 -m build --wheel -Csetup-args="--cross-file=${CROSSFILE}" -Cbuild-dir=build_np
+	cp pandas/dist/*.whl pandas_wasm32.whl
 
 clean:
 	rm -rf python numpy markupsafe numpy-wasix_wasm32.whl markupsafe_wasm32.whl python.webc python cross-venv native-venv
