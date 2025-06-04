@@ -39,6 +39,11 @@ pandas: Makefile wasi.meson.cross
 	git restore pandas
 	git submodule update --init --recursive
 
+six: Makefile wasi.meson.cross
+	rm -rf six
+	git restore six
+	git submodule update --init --recursive
+
 python.webc:
 	wasmer package download wasmer/python-ehpic -o python.webc
 	touch python.webc
@@ -84,6 +89,10 @@ tzdata_wasm32.whl: tzdata cross-venv
 pandas_wasm32.whl: pandas cross-venv
 	source ./cross-venv/bin/activate && cd pandas && CC=$$(pwd)/../clang.sh CXX=$$(pwd)/../clang++.sh python3 -m build --wheel -Csetup-args="--cross-file=${CROSSFILE}" -Cbuild-dir=build_np
 	cp pandas/dist/*.whl pandas_wasm32.whl
+
+six_wasm32.whl: six cross-venv
+	source ./cross-venv/bin/activate && cd six && python3 -m build --wheel
+	cp six/dist/*.whl six_wasm32.whl
 
 clean:
 	rm -rf python numpy markupsafe numpy-wasix_wasm32.whl markupsafe_wasm32.whl python.webc python cross-venv native-venv
