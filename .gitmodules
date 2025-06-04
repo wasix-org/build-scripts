@@ -13,3 +13,6 @@
 [submodule "dateutil"]
 	path = dateutil
 	url = https://github.com/dateutil/dateutil.git
+[submodule "tzdata"]
+	path = tzdata
+	url = https://github.com/python/tzdata.git
