@@ -24,6 +24,11 @@ pytz: Makefile
 	git restore pytz
 	git submodule update --init --recursive
 
+dateutil: Makefile
+	rm -rf dateutil
+	git restore dateutil
+	git submodule update --init --recursive
+
 python.webc:
 	wasmer package download wasmer/python-ehpic -o python.webc
 	touch python.webc
@@ -54,6 +59,11 @@ pytz_wasm32.whl: pytz cross-venv wasi.meson.cross
 	source ./cross-venv/bin/activate && cd pytz && make build
 	source ./cross-venv/bin/activate && cd pytz/src && python3 -m build --wheel
 	cp pytz/src/dist/*.whl pytz_wasm32.whl
+
+# Not a native package at all
+dateutil_wasm32.whl: cross-venv wasi.meson.cross
+	source ./cross-venv/bin/activate && cd dateutil && python3 -m build --wheel
+	cp dateutil/dist/*.whl dateutil_wasm32.whl
 
 clean:
 	rm -rf python numpy markupsafe numpy-wasix_wasm32.whl markupsafe_wasm32.whl python.webc python cross-venv native-venv
