@@ -29,6 +29,11 @@ dateutil: Makefile
 	git restore dateutil
 	git submodule update --init --recursive
 
+tzdata: Makefile
+	rm -rf tzdata
+	git restore tzdata
+	git submodule update --init --recursive
+
 python.webc:
 	wasmer package download wasmer/python-ehpic -o python.webc
 	touch python.webc
@@ -50,20 +55,24 @@ numpy-wasix_wasm32.whl: numpy cross-venv wasi.meson.cross
 	source ./cross-venv/bin/activate && cd numpy && python3 -m build --wheel -Csetup-args="--cross-file=${CROSSFILE}" -Cbuild-dir=build_np
 	cp numpy/dist/*.whl numpy-wasix_wasm32.whl
 
-markupsafe_wasm32.whl: markupsafe cross-venv wasi.meson.cross
+markupsafe_wasm32.whl: markupsafe cross-venv
 	source ./cross-venv/bin/activate && cd markupsafe && python3 -m build --wheel
 	cp markupsafe/dist/*.whl markupsafe_wasm32.whl
 
 # Technically not a native package, but it uses a native build process to prepare some files.
-pytz_wasm32.whl: pytz cross-venv wasi.meson.cross
+pytz_wasm32.whl: pytz cross-venv
 	source ./cross-venv/bin/activate && cd pytz && make build
 	source ./cross-venv/bin/activate && cd pytz/src && python3 -m build --wheel
 	cp pytz/src/dist/*.whl pytz_wasm32.whl
 
 # Not a native package at all
-dateutil_wasm32.whl: cross-venv wasi.meson.cross
+dateutil_wasm32.whl: dateutil cross-venv
 	source ./cross-venv/bin/activate && cd dateutil && python3 -m build --wheel
 	cp dateutil/dist/*.whl dateutil_wasm32.whl
+
+tzdata_wasm32.whl: tzdata cross-venv
+	source ./cross-venv/bin/activate && cd tzdata && python3 -m build --wheel
+	cp tzdata/dist/*.whl tzdata_wasm32.whl
 
 clean:
 	rm -rf python numpy markupsafe numpy-wasix_wasm32.whl markupsafe_wasm32.whl python.webc python cross-venv native-venv
