@@ -1,3 +1,6 @@
 [submodule "numpy"]
 	path = numpy
 	url = https://github.com/numpy/numpy.git
+[submodule "markupsafe"]
+	path = markupsafe
+	url = https://github.com/pallets/markupsafe.git
