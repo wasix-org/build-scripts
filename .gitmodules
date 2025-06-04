@@ -7,3 +7,6 @@
 [submodule "pandas"]
 	path = pandas
 	url = https://github.com/pandas-dev/pandas.git
+[submodule "pytz"]
+	path = pytz
+	url = https://github.com/stub42/pytz.git
