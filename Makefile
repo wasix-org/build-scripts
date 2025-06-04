@@ -7,6 +7,12 @@ SHELL:=/usr/bin/bash
 
 all: numpy-wasix_wasm32.whl
 
+markupsafe: Makefile
+	rm -rf markupsafe
+	git restore markupsafe
+	git submodule update --init --recursive
+# cd numpy && git am ../patches/*.patch
+
 numpy: $(wildcard patches/*.patch) wasi.meson.cross Makefile
 	rm -rf numpy
 	git restore numpy
@@ -27,14 +33,19 @@ native-venv:
 
 cross-venv: native-venv python
 	rm -rf ./cross-venv
-	source ./native-venv/bin/activate && python3 -m crossenv python/tmp/wasix-install/cpython/bin/python3.wasm ./cross-venv --cc 'clang-19 --sysroot='"${WASIX_SYSROOT}"' --target=wasm32-wasix' --cxx 'clang-19 --sysroot='"${WASIX_SYSROOT}"' --target=wasm32-wasix -fPIC'
+	source ./native-venv/bin/activate && python3 -m crossenv python/tmp/wasix-install/cpython/bin/python3.wasm ./cross-venv --cc $$(pwd)'/clang.sh' --cxx $$(pwd)'/clang++.sh'
 	source ./cross-venv/bin/activate && python3 -m pip install cython build
 
 numpy-wasix_wasm32.whl: numpy cross-venv wasi.meson.cross
 	source ./cross-venv/bin/activate && cd numpy && python3 -m build --wheel -Csetup-args="--cross-file=${CROSSFILE}" -Cbuild-dir=build_np
 	cp numpy/dist/*.whl numpy-wasix_wasm32.whl
 
+markupsafe_wasm32.whl: markupsafe cross-venv wasi.meson.cross
+	source ./cross-venv/bin/activate && cd markupsafe && python3 -m build --wheel
+	cp markupsafe/dist/*.whl markupsafe_wasm32.whl
+
 clean:
-	rm -rf python numpy numpy-wasix_wasm32.whl python.webc python.tmp cross-venv native-venv
+	rm -rf python numpy markupsafe numpy-wasix_wasm32.whl markupsafe_wasm32.whl python.webc python cross-venv native-venv
 	git restore numpy
+	git restore markupsafe
 	git submodule update --init --recursive
