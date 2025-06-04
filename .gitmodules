@@ -10,3 +10,6 @@
 [submodule "pytz"]
 	path = pytz
 	url = https://github.com/stub42/pytz.git
+[submodule "dateutil"]
+	path = dateutil
+	url = https://github.com/dateutil/dateutil.git
