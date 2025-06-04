@@ -19,6 +19,11 @@ numpy: $(wildcard patches/*.patch) wasi.meson.cross Makefile
 	git submodule update --init --recursive
 	cd numpy && git am ../patches/*.patch
 
+pytz: Makefile
+	rm -rf pytz
+	git restore pytz
+	git submodule update --init --recursive
+
 python.webc:
 	wasmer package download wasmer/python-ehpic -o python.webc
 	touch python.webc
@@ -43,6 +48,12 @@ numpy-wasix_wasm32.whl: numpy cross-venv wasi.meson.cross
 markupsafe_wasm32.whl: markupsafe cross-venv wasi.meson.cross
 	source ./cross-venv/bin/activate && cd markupsafe && python3 -m build --wheel
 	cp markupsafe/dist/*.whl markupsafe_wasm32.whl
+
+# Technically not a native package, but it uses a native build process to prepare some files.
+pytz_wasm32.whl: pytz cross-venv wasi.meson.cross
+	source ./cross-venv/bin/activate && cd pytz && make build
+	source ./cross-venv/bin/activate && cd pytz/src && python3 -m build --wheel
+	cp pytz/src/dist/*.whl pytz_wasm32.whl
 
 clean:
 	rm -rf python numpy markupsafe numpy-wasix_wasm32.whl markupsafe_wasm32.whl python.webc python cross-venv native-venv
