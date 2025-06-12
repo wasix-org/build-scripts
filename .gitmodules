@@ -19,3 +19,6 @@
 [submodule "six"]
 	path = six
 	url = https://github.com/benjaminp/six.git
+[submodule "msgpack-python"]
+	path = msgpack-python
+	url = https://github.com/msgpack/msgpack-python
