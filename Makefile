@@ -98,4 +98,9 @@ clean:
 	rm -rf python numpy markupsafe numpy-wasix_wasm32.whl markupsafe_wasm32.whl python.webc python cross-venv native-venv
 	git restore numpy
 	git restore markupsafe
+	git restore dateutil
+	git restore pandas
+	git restore pytz
+	git restore six_wasm32
+	git restore tzdata
 	git submodule update --init --recursive
