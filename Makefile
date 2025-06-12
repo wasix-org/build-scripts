@@ -44,6 +44,11 @@ six: Makefile wasi.meson.cross
 	git restore six
 	git submodule update --init --recursive
 
+msgpack-python: Makefile
+	rm -rf msgpack-python
+	git restore msgpack-python
+	git submodule update --init --recursive
+
 python.webc:
 	wasmer package download wasmer/python-ehpic -o python.webc
 	touch python.webc
@@ -94,6 +99,10 @@ six_wasm32.whl: six cross-venv
 	source ./cross-venv/bin/activate && cd six && python3 -m build --wheel
 	cp six/dist/*.whl six_wasm32.whl
 
+msgpack-python_wasm32.whl: msgpack-python cross-venv
+	source ./cross-venv/bin/activate && cd msgpack-python && make cython && python3 -m build --wheel
+	cp msgpack-python/dist/*.whl msgpack-python_wasm32.whl
+
 clean:
 	rm -rf python numpy markupsafe numpy-wasix_wasm32.whl markupsafe_wasm32.whl python.webc python cross-venv native-venv
 	git restore numpy
@@ -103,4 +112,5 @@ clean:
 	git restore pytz
 	git restore six_wasm32
 	git restore tzdata
+	git restore msgpack-python
 	git submodule update --init --recursive
