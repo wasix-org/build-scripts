@@ -27,7 +27,7 @@ for arg in "${PASSED_ARGS[@]}"; do
         -c|-S|-E)
             run_linker=false
             ;;
-        --version)
+        --version|-print*)
             run_linker=false
             ;;
         -shared|--shared)
