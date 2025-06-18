@@ -22,3 +22,6 @@
 [submodule "msgpack-python"]
 	path = msgpack-python
 	url = https://github.com/msgpack/msgpack-python
+[submodule "pycryptodome"]
+	path = pycryptodome
+	url = https://github.com/Legrandin/pycryptodome.git

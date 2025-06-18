@@ -11,3 +11,4 @@ Buildscripts to build numpy and other wheels for wasix
 * tzdata: 2025.2
 * six: 1.17.0
 * msgpack 1.1.0
+* pycryptodome 3.23.0
