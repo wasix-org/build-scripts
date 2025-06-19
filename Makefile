@@ -11,7 +11,6 @@ markupsafe: Makefile
 	rm -rf markupsafe
 	git restore markupsafe
 	git submodule update --init --recursive
-# cd numpy && git am ../patches/*.patch
 
 numpy: $(wildcard patches/*.patch) wasi.meson.cross Makefile
 	rm -rf numpy
@@ -47,6 +46,11 @@ six: Makefile wasi.meson.cross
 msgpack-python: Makefile
 	rm -rf msgpack-python
 	git restore msgpack-python
+	git submodule update --init --recursive
+
+pycryptodome: Makefile
+	rm -rf pycryptodome
+	git restore pycryptodome
 	git submodule update --init --recursive
 
 python.webc:
@@ -99,12 +103,16 @@ six_wasm32.whl: six cross-venv
 	source ./cross-venv/bin/activate && cd six && python3 -m build --wheel
 	cp six/dist/*.whl six_wasm32.whl
 
+pycryptodome_wasm32.whl: pycryptodome cross-venv
+	source ./cross-venv/bin/activate && cd pycryptodome && CC=$$(pwd)/../clang.sh CXX=$$(pwd)/../clang.sh python3 -m build --wheel
+	cp pycryptodome/dist/*.whl pycryptodome_wasm32.whl
+
 msgpack-python_wasm32.whl: msgpack-python cross-venv
 	source ./cross-venv/bin/activate && cd msgpack-python && make cython && python3 -m build --wheel
 	cp msgpack-python/dist/*.whl msgpack-python_wasm32.whl
 
 clean:
-	rm -rf python numpy markupsafe numpy-wasix_wasm32.whl markupsafe_wasm32.whl python.webc python cross-venv native-venv
+	rm -rf python numpy markupsafe python.webc python cross-venv native-venv
 	git restore numpy
 	git restore markupsafe
 	git restore dateutil
@@ -113,4 +121,5 @@ clean:
 	git restore six_wasm32
 	git restore tzdata
 	git restore msgpack-python
+	git restore pycryptodome
 	git submodule update --init --recursive
