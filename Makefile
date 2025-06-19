@@ -111,6 +111,20 @@ msgpack-python_wasm32.whl: msgpack-python cross-venv
 	source ./cross-venv/bin/activate && cd msgpack-python && make cython && python3 -m build --wheel
 	cp msgpack-python/dist/*.whl msgpack-python_wasm32.whl
 
+install:
+	ifndef INSTALL_DIR
+	$(error You need to define INSTALL_DIR)
+	endif
+	unzip numpy-wasix_wasm32.whl -d ${INSTALL_DIR}
+	unzip markupsafe_wasm32.whl -d ${INSTALL_DIR}
+	unzip pytz_wasm32.whl -d ${INSTALL_DIR}
+	unzip dateutil_wasm32.whl -d ${INSTALL_DIR}
+	unzip pandas_wasm32.whl -d ${INSTALL_DIR}
+	unzip six_wasm32.whl -d ${INSTALL_DIR}
+	unzip tzdata_wasm32.whl -d ${INSTALL_DIR}
+	unzip msgpack-python_wasm32.whl -d ${INSTALL_DIR}
+	unzip pycryptodome_wasm32.whl -d ${INSTALL_DIR}
+
 clean:
 	rm -rf python numpy markupsafe python.webc python cross-venv native-venv
 	git restore numpy
