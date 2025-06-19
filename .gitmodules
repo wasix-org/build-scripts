@@ -25,3 +25,6 @@
 [submodule "pycryptodome"]
 	path = pycryptodome
 	url = https://github.com/Legrandin/pycryptodome.git
+[submodule "pycryptodomex"]
+	path = pycryptodomex
+	url = https://github.com/Legrandin/pycryptodome.git
