@@ -2,3 +2,4 @@
 /native-venv
 /python.webc
 /python
+/*.build

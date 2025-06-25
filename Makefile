@@ -5,6 +5,8 @@ endif
 CROSSFILE=$(shell pwd)/wasi.meson.cross
 SHELL:=/usr/bin/bash
 
+PWD:=$(shell pwd)
+
 all: numpy-wasix_wasm32.whl
 
 markupsafe: Makefile
@@ -52,6 +54,18 @@ pycryptodome: Makefile
 	rm -rf pycryptodome
 	git restore pycryptodome
 	git submodule update --init --recursive
+
+pycryptodomex: Makefile
+	rm -rf pycryptodomex
+	git restore pycryptodomex
+	git submodule update --init --recursive
+	# If that file exists, pycryptodome will be built with a separate namespace
+	touch pycryptodomex/.separate_namespace
+
+zbar: Makefile
+	rm -rf zbar
+	git restore zbar
+	git submodule update --init --recursive zbar
 
 python.webc:
 	wasmer package download wasmer/python-ehpic -o python.webc
@@ -107,14 +121,23 @@ pycryptodome_wasm32.whl: pycryptodome cross-venv
 	source ./cross-venv/bin/activate && cd pycryptodome && CC=$$(pwd)/../clang.sh CXX=$$(pwd)/../clang.sh python3 -m build --wheel
 	cp pycryptodome/dist/*.whl pycryptodome_wasm32.whl
 
+pycryptodomex_wasm32.whl: pycryptodomex cross-venv
+	source ./cross-venv/bin/activate && cd pycryptodomex && CC=$$(pwd)/../clang.sh CXX=$$(pwd)/../clang.sh python3 -m build --wheel
+	cp pycryptodomex/dist/*.whl pycryptodomex_wasm32.whl
+
 msgpack-python_wasm32.whl: msgpack-python cross-venv
 	source ./cross-venv/bin/activate && cd msgpack-python && make cython && python3 -m build --wheel
 	cp msgpack-python/dist/*.whl msgpack-python_wasm32.whl
 
+# TODO: Add libjpeg support
+libzbar.tar.xz: zbar
+	cd zbar && autoreconf -vfi
+	cd zbar && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --enable-static --disable-shared --disable-video --disable-rpath --without-imagemagick --without-java --without-qt --without-gtk --without-xv --without-xshm --without-python
+	cd zbar && make
+	cd zbar && make install DESTDIR=${PWD}/zbar.build
+	cd zbar.build && tar cvfJ ../libzbar.tar.xz *
+
 install:
-	ifndef INSTALL_DIR
-	$(error You need to define INSTALL_DIR)
-	endif
 	unzip numpy-wasix_wasm32.whl -d ${INSTALL_DIR}
 	unzip markupsafe_wasm32.whl -d ${INSTALL_DIR}
 	unzip pytz_wasm32.whl -d ${INSTALL_DIR}
@@ -124,16 +147,22 @@ install:
 	unzip tzdata_wasm32.whl -d ${INSTALL_DIR}
 	unzip msgpack-python_wasm32.whl -d ${INSTALL_DIR}
 	unzip pycryptodome_wasm32.whl -d ${INSTALL_DIR}
+	unzip pycryptodomex_wasm32.whl -d ${INSTALL_DIR}
+
+install-libs: libzbar.tar.xz
+	tar xJf libzbar.tar.xz -C ${WASIX_SYSROOT}
 
 clean:
-	rm -rf python numpy markupsafe python.webc python cross-venv native-venv
+	rm -rf python numpy markupsafe python.webc python cross-venv native-venv *.build
 	git restore numpy
 	git restore markupsafe
 	git restore dateutil
 	git restore pandas
 	git restore pytz
-	git restore six_wasm32
+	git restore six
 	git restore tzdata
 	git restore msgpack-python
 	git restore pycryptodome
+	git restore pycryptodomex
+	git restore zbar
 	git submodule update --init --recursive
