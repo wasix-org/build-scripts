@@ -67,6 +67,11 @@ zbar: Makefile
 	git restore zbar
 	git submodule update --init --recursive zbar
 
+pyzbar: Makefile
+	rm -rf pyzbar
+	git restore pyzbar
+	git submodule update --init --recursive pyzbar
+
 libffi: Makefile
 	rm -rf libffi
 	git restore libffi
@@ -134,6 +139,10 @@ msgpack-python_wasm32.whl: msgpack-python cross-venv
 	source ./cross-venv/bin/activate && cd msgpack-python && make cython && python3 -m build --wheel
 	cp msgpack-python/dist/*.whl msgpack-python_wasm32.whl
 
+pyzbar_wasm32.whl: pyzbar cross-venv
+	source ./cross-venv/bin/activate && cd pyzbar && python3 -m build --wheel
+	cp pyzbar/dist/*.whl pyzbar_wasm32.whl
+
 # TODO: Add libjpeg support
 libzbar.tar.xz: zbar
 	cd zbar && autoreconf -vfi
@@ -162,6 +171,7 @@ install:
 	unzip msgpack-python_wasm32.whl -d ${INSTALL_DIR}
 	unzip pycryptodome_wasm32.whl -d ${INSTALL_DIR}
 	unzip pycryptodomex_wasm32.whl -d ${INSTALL_DIR}
+	unzip pyzbar_wasm32.whl -d ${INSTALL_DIR}
 
 install-libs: libzbar.tar.xz
 	tar xJf libzbar.tar.xz -C ${WASIX_SYSROOT}
@@ -180,5 +190,6 @@ clean:
 	git restore pycryptodome
 	git restore pycryptodomex
 	git restore zbar
+	git restore pyzbar
 	git restore libffi
 	git submodule update --init --recursive
