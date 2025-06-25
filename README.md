@@ -10,9 +10,10 @@ Buildscripts to build numpy and other wheels for wasix
 * dateutil: 2.9.0
 * tzdata: 2025.2
 * six: 1.17.0
-* msgpack 1.1.0
-* pycryptodome 3.23.0
+* msgpack: 1.1.0
+* pycryptodome: 3.23.0
+* pyzbar: 0.1.9
 
 ## Libraries
 
-* libzbar 0.23.93
+* libzbar: 0.23.93

@@ -31,3 +31,6 @@
 [submodule "zbar"]
 	path = zbar
 	url = https://github.com/mchehab/zbar.git
+[submodule "pyzbar"]
+	path = pyzbar
+	url = https://github.com/NaturalHistoryMuseum/pyzbar.git
