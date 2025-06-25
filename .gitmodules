@@ -28,3 +28,6 @@
 [submodule "pycryptodomex"]
 	path = pycryptodomex
 	url = https://github.com/Legrandin/pycryptodome.git
+[submodule "zbar"]
+	path = zbar
+	url = https://github.com/mchehab/zbar.git
