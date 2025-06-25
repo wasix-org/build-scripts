@@ -137,7 +137,9 @@ msgpack-python_wasm32.whl: msgpack-python cross-venv
 # TODO: Add libjpeg support
 libzbar.tar.xz: zbar
 	cd zbar && autoreconf -vfi
-	cd zbar && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --enable-static --disable-shared --disable-video --disable-rpath --without-imagemagick --without-java --without-qt --without-gtk --without-xv --without-xshm --without-python
+	# Force configure to build shared libraries. This is a hack, but it works.
+	cd zbar && sed -i 's/^  archive_cmds=$$/  archive_cmds='\''$$CC -shared $$pic_flag $$libobjs $$deplibs $$compiler_flags $$wl-soname $$wl$$soname -o $$lib'\''/' configure
+	cd zbar && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --enable-static --enable-shared --disable-video --disable-rpath --without-imagemagick --without-java --without-qt --without-gtk --without-xv --without-xshm --without-python
 	cd zbar && make
 	cd zbar && make install DESTDIR=${PWD}/zbar.build
 	cd zbar.build && tar cvfJ ../libzbar.tar.xz *
