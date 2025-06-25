@@ -17,3 +17,4 @@ Buildscripts to build numpy and other wheels for wasix
 ## Libraries
 
 * libzbar: 0.23.93
+* libffi: wasix unstable
