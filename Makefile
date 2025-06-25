@@ -67,6 +67,11 @@ zbar: Makefile
 	git restore zbar
 	git submodule update --init --recursive zbar
 
+libffi: Makefile
+	rm -rf libffi
+	git restore libffi
+	git submodule update --init --recursive libffi
+
 python.webc:
 	wasmer package download wasmer/python-ehpic -o python.webc
 	touch python.webc
@@ -137,6 +142,13 @@ libzbar.tar.xz: zbar
 	cd zbar && make install DESTDIR=${PWD}/zbar.build
 	cd zbar.build && tar cvfJ ../libzbar.tar.xz *
 
+libffi.tar.xz: libffi
+	cd libffi && autoreconf -vfi
+	cd libffi && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --host="wasm32-wasi" --enable-static --disable-shared --disable-dependency-tracking --disable-builddir --disable-multi-os-directory --disable-raw-api --disable-docs
+	cd libffi && make
+	cd libffi && make install DESTDIR=${PWD}/libffi.build
+	cd libffi.build && tar cvfJ ../libffi.tar.xz *
+
 install:
 	unzip numpy-wasix_wasm32.whl -d ${INSTALL_DIR}
 	unzip markupsafe_wasm32.whl -d ${INSTALL_DIR}
@@ -151,6 +163,7 @@ install:
 
 install-libs: libzbar.tar.xz
 	tar xJf libzbar.tar.xz -C ${WASIX_SYSROOT}
+	tar xJf libffi.tar.xz -C ${WASIX_SYSROOT}
 
 clean:
 	rm -rf python numpy markupsafe python.webc python cross-venv native-venv *.build
@@ -165,4 +178,5 @@ clean:
 	git restore pycryptodome
 	git restore pycryptodomex
 	git restore zbar
+	git restore libffi
 	git submodule update --init --recursive
