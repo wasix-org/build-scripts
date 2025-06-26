@@ -161,17 +161,17 @@ libffi.tar.xz: libffi
 	cd libffi.build && tar cvfJ ../libffi.tar.xz *
 
 install:
-	unzip numpy-wasix_wasm32.whl -d ${INSTALL_DIR}
-	unzip markupsafe_wasm32.whl -d ${INSTALL_DIR}
-	unzip pytz_wasm32.whl -d ${INSTALL_DIR}
-	unzip dateutil_wasm32.whl -d ${INSTALL_DIR}
-	unzip pandas_wasm32.whl -d ${INSTALL_DIR}
-	unzip six_wasm32.whl -d ${INSTALL_DIR}
-	unzip tzdata_wasm32.whl -d ${INSTALL_DIR}
-	unzip msgpack-python_wasm32.whl -d ${INSTALL_DIR}
-	unzip pycryptodome_wasm32.whl -d ${INSTALL_DIR}
-	unzip pycryptodomex_wasm32.whl -d ${INSTALL_DIR}
-	unzip pyzbar_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq numpy-wasix_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq markupsafe_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq pytz_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq dateutil_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq pandas_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq six_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq tzdata_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq msgpack-python_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq pycryptodome_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq pycryptodomex_wasm32.whl -d ${INSTALL_DIR}
+	unzip -oq pyzbar_wasm32.whl -d ${INSTALL_DIR}
 
 install-libs: libzbar.tar.xz
 	tar xJf libzbar.tar.xz -C ${WASIX_SYSROOT}
