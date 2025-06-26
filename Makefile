@@ -63,17 +63,18 @@ all: $(BUILT_WHEELS)
 
 # Targets for preparing a wasm crossenv
 python.webc:
-	wasmer package download wasmer/python-ehpic -o python.webc
+	wasmer package download zebreus/numpython -o python.webc
 	touch python.webc
 python: python.webc
 	wasmer package unpack python.webc --out-dir python
+	cp python/modules/python python/artifacts/wasix-install/cpython/bin/python3.wasm
 	touch python
 native-venv:
 	python3 -m venv ./native-venv
 	source ./native-venv/bin/activate && pip install crossenv
 cross-venv: native-venv python
 	rm -rf ./cross-venv
-	source ./native-venv/bin/activate && python3 -m crossenv python/tmp/wasix-install/cpython/bin/python3.wasm ./cross-venv --cc $$(pwd)'/clang.sh' --cxx $$(pwd)'/clang++.sh'
+	source ./native-venv/bin/activate && python3 -m crossenv python/artifacts/wasix-install/cpython/bin/python3.wasm ./cross-venv --cc wasix-clang --cxx wasix-clang++
 	source ./cross-venv/bin/activate && python3 -m pip install cython build
 
 #####     Preparing submodules     #####
