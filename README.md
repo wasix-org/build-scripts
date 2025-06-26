@@ -1,7 +1,25 @@
 # more than numpy
-Buildscripts to build numpy and other wheels for wasix
+
+Buildscripts to build numpy and other wheels for wasix. For convenience, this package already includes prebuilt versions of all the wheels and libraries.
+
+## Usage
+
+The build script is controlled by the following environment variables:
+
+* `CC`, `CXX`, `AR`, `LD`, `RANLIB`, etc... : The cross-compiler tools. These should all be normal clang tools, but target wasm32-wasix by default and use the wasix sysroot.
+* `WASIX_SYSROOT`: The path to the wasix sysroot that is used by the toolchain. Libraries will get installed here when you run `make install` or when they are required to build a package.
+* `INSTALL_DIR`: The path to the python library path. Wheels will get installed here when you run `make install`.
+* `WASMER`: The path to the wasmer binary. You must have it registered to handle wasm files as binfmt_misc. You can do this with `sudo $WASMER binfmt reregister`.
+
+The easiest way to setup all the environment variables is to activate the wasix-clang environment using `source wasix-clang/activate`.
+
+Then you can run `make all` to build all wheels and libraries.
 
 ## Versions
+
+Here is a list of the versions of the wheels and libraries that are included in this package:
+
+### Wheels
 
 * numpy: 2.0.2
 * markupsafe: 3.0.2
@@ -14,7 +32,7 @@ Buildscripts to build numpy and other wheels for wasix
 * pycryptodome: 3.23.0
 * pyzbar: 0.1.9
 
-## Libraries
+### Libraries
 
 * libzbar: 0.23.93
 * libffi: wasix unstable
