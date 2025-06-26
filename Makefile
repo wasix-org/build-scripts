@@ -9,113 +9,103 @@ PWD:=$(shell pwd)
 
 all: numpy-wasix_wasm32.whl
 
-markupsafe: Makefile
-	rm -rf markupsafe
-	git restore markupsafe
-	git submodule update --init --recursive
+# Wheels build a .whl file
+WHEELS=
+WHEELS+=numpy
+# WHEELS+=pytz
+WHEELS+=markupsafe
+# Not a native package at all
+WHEELS+=dateutil
+# Technically not a native package, but it uses a native build process to prepare some files.
+WHEELS+=tzdata
+# WHEELS+=pandas
+WHEELS+=six
+WHEELS+=msgpack-python
+WHEELS+=pycryptodome
+WHEELS+=pycryptodomex
+WHEELS+=pyzbar
 
-numpy: $(wildcard patches/*.patch) wasi.meson.cross Makefile
-	rm -rf numpy
-	git restore numpy
-	git submodule update --init --recursive
-	cd numpy && git am ../patches/*.patch
+# Libs build a .tar.xz file with a sysroot
+LIBS=
+LIBS+=zbar
+LIBS+=libffi
 
-pytz: Makefile
-	rm -rf pytz
-	git restore pytz
-	git submodule update --init --recursive
+SUBMODULES=$(WHEELS) $(LIBS)
 
-dateutil: Makefile
-	rm -rf dateutil
-	git restore dateutil
-	git submodule update --init --recursive
+BUILT_WHEELS=$(addsuffix _wasm32.whl,$(WHEELS))
+UNPACKED_LIBS=$(addsuffix .build,$(LIBS))
+BUILT_LIBS=$(addsuffix .tar.xz,$(LIBS))
 
-tzdata: Makefile
-	rm -rf tzdata
-	git restore tzdata
-	git submodule update --init --recursive
+define reset_submodule =
+rm -rf $@
+git restore $@
+git submodule update --init --recursive $@
+cd $@ && git am --abort >/dev/null 2>&1 || true
+cd $@ && find ../patches -name '$@*.patch'  -exec git am {} \;
+endef
 
-pandas: Makefile wasi.meson.cross
-	rm -rf pandas
-	git restore pandas
-	git submodule update --init --recursive
+define build_wheel =
+source ./cross-venv/bin/activate && cd $(word 1, $(subst _, ,$@)) && python3 -m build --wheel
+cp $(word 1, $(subst _, ,$@))/dist/*.whl $@
+endef
 
-six: Makefile wasi.meson.cross
-	rm -rf six
-	git restore six
-	git submodule update --init --recursive
+define package_lib =
+cd $(word 1, $(subst ., ,$@)).build && tar cfJ ../$@ *
+endef
 
-msgpack-python: Makefile
-	rm -rf msgpack-python
-	git restore msgpack-python
-	git submodule update --init --recursive
+all: $(BUILT_WHEELS)
 
-pycryptodome: Makefile
-	rm -rf pycryptodome
-	git restore pycryptodome
-	git submodule update --init --recursive
-
-pycryptodomex: Makefile
-	rm -rf pycryptodomex
-	git restore pycryptodomex
-	git submodule update --init --recursive
-	# If that file exists, pycryptodome will be built with a separate namespace
-	touch pycryptodomex/.separate_namespace
-
-zbar: Makefile
-	rm -rf zbar
-	git restore zbar
-	git submodule update --init --recursive zbar
-
-pyzbar: Makefile
-	rm -rf pyzbar
-	git restore pyzbar
-	git submodule update --init --recursive pyzbar
-
-libffi: Makefile
-	rm -rf libffi
-	git restore libffi
-	git submodule update --init --recursive libffi
-
+# Targets for preparing a wasm crossenv
 python.webc:
 	wasmer package download wasmer/python-ehpic -o python.webc
 	touch python.webc
-
 python: python.webc
 	wasmer package unpack python.webc --out-dir python
 	touch python
-
 native-venv:
 	python3 -m venv ./native-venv
 	source ./native-venv/bin/activate && pip install crossenv
-
 cross-venv: native-venv python
 	rm -rf ./cross-venv
 	source ./native-venv/bin/activate && python3 -m crossenv python/tmp/wasix-install/cpython/bin/python3.wasm ./cross-venv --cc $$(pwd)'/clang.sh' --cxx $$(pwd)'/clang++.sh'
 	source ./cross-venv/bin/activate && python3 -m pip install cython build
 
-numpy-wasix_wasm32.whl: numpy cross-venv wasi.meson.cross
-	source ./cross-venv/bin/activate && cd numpy && python3 -m build --wheel -Csetup-args="--cross-file=${CROSSFILE}" -Cbuild-dir=build_np
-	cp numpy/dist/*.whl numpy-wasix_wasm32.whl
+#####     Preparing submodules     #####
 
-markupsafe_wasm32.whl: markupsafe cross-venv
-	source ./cross-venv/bin/activate && cd markupsafe && python3 -m build --wheel
-	cp markupsafe/dist/*.whl markupsafe_wasm32.whl
+# A target for making sure a submodule is clean
+# To override the reset behaviour, add a target for your submodule
+$(SUBMODULES): %: #Makefile
+%: %/.git
+	$(reset_submodule)
 
-# Technically not a native package, but it uses a native build process to prepare some files.
-pytz_wasm32.whl: pytz cross-venv
+numpy: $(shell find patches -name 'numpy*.patch')
+
+pycryptodomex:
+	$(reset_submodule)
+	# If that file exists, pycryptodome will be built with a separate namespace
+	touch pycryptodomex/.separate_namespace
+
+#####     Building wheels     #####
+
+# A target to build a wheel from a python submodule
+# To override the build behaviour, add a target for your submodule
+$(BUILT_WHEELS): %_wasm32.whl: % cross-venv
+%_wasm32.whl: %
+	$(build_wheel)
+
+pyzbar_wasm32.whl: ${WASIX_SYSROOT}/lib/wasm32-wasi/libzbar.a
+
+pytz_wasm32.whl:
 	source ./cross-venv/bin/activate && cd pytz && make build
-	source ./cross-venv/bin/activate && cd pytz/src && python3 -m build --wheel
-	cp pytz/src/dist/*.whl pytz_wasm32.whl
+	$(build_wheel)
 
-# Not a native package at all
-dateutil_wasm32.whl: dateutil cross-venv
-	source ./cross-venv/bin/activate && cd dateutil && python3 -m build --wheel
-	cp dateutil/dist/*.whl dateutil_wasm32.whl
+msgpack-python_wasm32.whl: msgpack-python cross-venv
+	source ./cross-venv/bin/activate && cd msgpack-python && make cython
+	$(build_wheel)
 
-tzdata_wasm32.whl: tzdata cross-venv
-	source ./cross-venv/bin/activate && cd tzdata && python3 -m build --wheel
-	cp tzdata/dist/*.whl tzdata_wasm32.whl
+numpy_wasm32.whl: wasi.meson.cross
+	source ./cross-venv/bin/activate && cd numpy && python3 -m build --wheel -Csetup-args="--cross-file=${CROSSFILE}" -Cbuild-dir=build_np
+	cp numpy/dist/*.whl numpy_wasm32.whl
 
 # Currently broken, because numpy is missing. The binary in the repo is build manually.
 # Build pandas manually by compiling a native numpy and extracting the wheel into the cross env
@@ -123,73 +113,59 @@ pandas_wasm32.whl: pandas cross-venv
 	source ./cross-venv/bin/activate && cd pandas && CC=$$(pwd)/../clang.sh CXX=$$(pwd)/../clang++.sh python3 -m build --wheel -Csetup-args="--cross-file=${CROSSFILE}" -Cbuild-dir=build_np
 	cp pandas/dist/*.whl pandas_wasm32.whl
 
-six_wasm32.whl: six cross-venv
-	source ./cross-venv/bin/activate && cd six && python3 -m build --wheel
-	cp six/dist/*.whl six_wasm32.whl
+#####     Building libraries     #####
 
-pycryptodome_wasm32.whl: pycryptodome cross-venv
-	source ./cross-venv/bin/activate && cd pycryptodome && CC=$$(pwd)/../clang.sh CXX=$$(pwd)/../clang.sh python3 -m build --wheel
-	cp pycryptodome/dist/*.whl pycryptodome_wasm32.whl
-
-pycryptodomex_wasm32.whl: pycryptodomex cross-venv
-	source ./cross-venv/bin/activate && cd pycryptodomex && CC=$$(pwd)/../clang.sh CXX=$$(pwd)/../clang.sh python3 -m build --wheel
-	cp pycryptodomex/dist/*.whl pycryptodomex_wasm32.whl
-
-msgpack-python_wasm32.whl: msgpack-python cross-venv
-	source ./cross-venv/bin/activate && cd msgpack-python && make cython && python3 -m build --wheel
-	cp msgpack-python/dist/*.whl msgpack-python_wasm32.whl
-
-pyzbar_wasm32.whl: pyzbar cross-venv
-	source ./cross-venv/bin/activate && cd pyzbar && python3 -m build --wheel
-	cp pyzbar/dist/*.whl pyzbar_wasm32.whl
+$(UNPACKED_LIBS): %.build: %
+$(BUILT_LIBS): %.tar.xz: %.build
+%.build: %
+	echo "Missing build script for $@" >&2 && exit 1
+%.tar.xz: %.build
+	$(package_lib)
+	touch $@
 
 # TODO: Add libjpeg support
-libzbar.tar.xz: zbar
+zbar.build: zbar
 	cd zbar && autoreconf -vfi
 	# Force configure to build shared libraries. This is a hack, but it works.
 	cd zbar && sed -i 's/^  archive_cmds=$$/  archive_cmds='\''$$CC -shared $$pic_flag $$libobjs $$deplibs $$compiler_flags $$wl-soname $$wl$$soname -o $$lib'\''/' configure
 	cd zbar && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --enable-static --enable-shared --disable-video --disable-rpath --without-imagemagick --without-java --without-qt --without-gtk --without-xv --without-xshm --without-python
 	cd zbar && make
 	cd zbar && make install DESTDIR=${PWD}/zbar.build
-	cd zbar.build && tar cvfJ ../libzbar.tar.xz *
+	touch $@
 
-libffi.tar.xz: libffi
+libffi.build: libffi
 	cd libffi && autoreconf -vfi
 	cd libffi && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --host="wasm32-wasi" --enable-static --disable-shared --disable-dependency-tracking --disable-builddir --disable-multi-os-directory --disable-raw-api --disable-docs
 	cd libffi && make
 	cd libffi && make install DESTDIR=${PWD}/libffi.build
-	cd libffi.build && tar cvfJ ../libffi.tar.xz *
+	touch $@
 
-install:
-	unzip -oq numpy-wasix_wasm32.whl -d ${INSTALL_DIR}
-	unzip -oq markupsafe_wasm32.whl -d ${INSTALL_DIR}
-	unzip -oq pytz_wasm32.whl -d ${INSTALL_DIR}
-	unzip -oq dateutil_wasm32.whl -d ${INSTALL_DIR}
-	unzip -oq pandas_wasm32.whl -d ${INSTALL_DIR}
-	unzip -oq six_wasm32.whl -d ${INSTALL_DIR}
-	unzip -oq tzdata_wasm32.whl -d ${INSTALL_DIR}
-	unzip -oq msgpack-python_wasm32.whl -d ${INSTALL_DIR}
-	unzip -oq pycryptodome_wasm32.whl -d ${INSTALL_DIR}
-	unzip -oq pycryptodomex_wasm32.whl -d ${INSTALL_DIR}
-	unzip -oq pyzbar_wasm32.whl -d ${INSTALL_DIR}
+INSTALLED_WHEELS=$(addprefix ${INSTALL_DIR}/.,$(addsuffix .installed,$(WHEELS)))
+INSTALLED_LIBS=$(addprefix ${WASIX_SYSROOT}/.,$(addsuffix .installed,$(LIBS)))
 
-install-libs: libzbar.tar.xz
-	tar xJf libzbar.tar.xz -C ${WASIX_SYSROOT}
-	tar xJf libffi.tar.xz -C ${WASIX_SYSROOT}
+${WASIX_SYSROOT}/.%.installed: %.tar.xz
+	test -n "${WASIX_SYSROOT}" || (echo "You must set WASIX_SYSROOT to your wasix sysroot" && exit 1)
+	tar mxJf $< -C ${WASIX_SYSROOT}
+	touch $@
 
-clean:
-	rm -rf python numpy markupsafe python.webc python cross-venv native-venv *.build
-	git restore numpy
-	git restore markupsafe
-	git restore dateutil
-	git restore pandas
-	git restore pytz
-	git restore six
-	git restore tzdata
-	git restore msgpack-python
-	git restore pycryptodome
-	git restore pycryptodomex
-	git restore zbar
-	git restore pyzbar
-	git restore libffi
-	git submodule update --init --recursive
+${INSTALL_DIR}/.%.installed: %_wasm32.whl
+	test -n "${INSTALL_DIR}" || (echo "You must set INSTALL_DIR to the python library path" && exit 1)
+	unzip -oq $< -d ${INSTALL_DIR}
+	touch $@
+
+install: install-wheels install-libs
+install-wheels: $(INSTALLED_WHEELS)
+install-libs: $(INSTALLED_LIBS)
+
+INSTALL_WHEELS_TARGETS=$(addprefix install-,$(WHEELS))
+INSTALL_LIBS_TARGETS=$(addprefix install-,$(LIBS))
+$(INSTALL_WHEELS_TARGETS): install-%: ${INSTALL_DIR}/.%.installed
+$(INSTALL_LIBS_TARGETS): install-%: ${WASIX_SYSROOT}/.%.installed
+
+clean: $(SUBMODULES)
+	rm -rf python python.webc
+	rm -rf cross-venv native-venv
+	rm -rf *.build
+
+.PRECIOUS: $(WHEELS) $(LIBS) $(UNPACKED_LIBS) $(BUILT_LIBS) $(BUILT_WHEELS)
+.PHONY: install install-wheels install-libs $(INSTALL_WHEELS_TARGETS) $(INSTALL_LIBS_TARGETS) clean 
