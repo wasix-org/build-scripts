@@ -12,7 +12,7 @@ all: numpy-wasix_wasm32.whl
 # Wheels build a .whl file
 WHEELS=
 WHEELS+=numpy
-# WHEELS+=pytz
+WHEELS+=pytz
 WHEELS+=markupsafe
 # Not a native package at all
 WHEELS+=dateutil
@@ -44,9 +44,15 @@ cd $@ && git am --abort >/dev/null 2>&1 || true
 cd $@ && find ../patches -name '$@*.patch'  -exec git am {} \;
 endef
 
+# Customizable build script
+# PYPROJECT_PATH is the path to the pyproject.toml relative to the submodule. Defaults to the submodule which is usually correct
+# BUILD_ENV_VARS is a space separated list of environment variables to pass to the build script. Defaults to empty
+# BUILD_EXTRA_FLAGS is a space separated list of extra flags to pass to the build script. Defaults to empty
+# PREPARE is a command to run before building the wheel. Defaults to empty. Runs inside the submodule directory
 define build_wheel =
-source ./cross-venv/bin/activate && cd $(word 1, $(subst _, ,$@)) && python3 -m build --wheel
-cp $(word 1, $(subst _, ,$@))/dist/*.whl $@
+if test -n "${PREPARE}" ; then source ./cross-venv/bin/activate && cd $(word 1, $(subst _, ,$@)) && _= ${PREPARE} ; fi
+source ./cross-venv/bin/activate && cd $(word 1, $(subst _, ,$@))/${PYPROJECT_PATH} && ${BUILD_ENV_VARS} python3 -m build --wheel ${BUILD_EXTRA_FLAGS}
+cp $(word 1, $(subst _, ,$@))/${PYPROJECT_PATH}/dist/*.whl $@
 endef
 
 define package_lib =
@@ -74,7 +80,7 @@ cross-venv: native-venv python
 
 # A target for making sure a submodule is clean
 # To override the reset behaviour, add a target for your submodule
-$(SUBMODULES): %: #Makefile
+$(SUBMODULES): %: Makefile
 %: %/.git
 	$(reset_submodule)
 
@@ -93,19 +99,21 @@ $(BUILT_WHEELS): %_wasm32.whl: % cross-venv
 %_wasm32.whl: %
 	$(build_wheel)
 
+# Depends on zbar headers being installed
 pyzbar_wasm32.whl: ${WASIX_SYSROOT}/lib/wasm32-wasi/libzbar.a
 
-pytz_wasm32.whl:
-	source ./cross-venv/bin/activate && cd pytz && make build
-	$(build_wheel)
+# setup.py is not in the root directory
+pytz_wasm32.whl: PYPROJECT_PATH = src
 
-msgpack-python_wasm32.whl: msgpack-python cross-venv
-	source ./cross-venv/bin/activate && cd msgpack-python && make cython
-	$(build_wheel)
+# Build the tzdb locally
+pytz_wasm32.whl: PREPARE = CCC_OVERRIDE_OPTIONS='^--target=x86_64-unknown-linux' CC=clang CXX=clang++ make build
 
-numpy_wasm32.whl: wasi.meson.cross
-	source ./cross-venv/bin/activate && cd numpy && python3 -m build --wheel -Csetup-args="--cross-file=${CROSSFILE}" -Cbuild-dir=build_np
-	cp numpy/dist/*.whl numpy_wasm32.whl
+# Needs to run a cython command before building the wheel	
+msgpack-python_wasm32.whl: PREPARE = make cython
+
+# Depends on a meson crossfile
+numpy_wasm32.whl: EXTRA_BUILD_FLAGS = -Csetup-args="--cross-file=${CROSSFILE}"
+numpy_wasm32.whl: ${CROSSFILE}
 
 # Currently broken, because numpy is missing. The binary in the repo is build manually.
 # Build pandas manually by compiling a native numpy and extracting the wheel into the cross env
