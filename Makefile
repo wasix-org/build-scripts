@@ -33,6 +33,7 @@ LIBS=
 LIBS+=zbar
 LIBS+=libffi
 LIBS+=pandoc
+LIBS+=postgresql
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -191,6 +192,13 @@ pandoc.build: pandoc
 	$(reset_builddir) $@
 	mkdir -p $@/bin
 	install -m 755 pandoc/pandoc.opt.wasm $@/bin/pandoc
+	touch $@
+
+postgresql.build: postgresql
+	cd postgresql && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --without-icu --without-zlib --without-readline
+	cd postgresql && make MAKELEVEL=0 -C src/interfaces
+	$(reset_builddir) $@
+	cd postgresql && make MAKELEVEL=0 -C src/interfaces install DESTDIR=${PWD}/$@
 	touch $@
 
 #####     Installing wheels and libs     #####
