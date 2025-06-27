@@ -34,6 +34,10 @@ LIBS+=zbar
 LIBS+=libffi
 LIBS+=pandoc
 
+DONT_INSTALL=
+# Dont install pypandoc because it uses the same name as pypandoc_binary
+DONT_INSTALL+=pypandoc
+
 SUBMODULES=$(WHEELS) $(LIBS)
 
 BUILT_WHEELS=$(addsuffix _wasm32.whl,$(WHEELS))
@@ -189,8 +193,15 @@ pandoc.build: pandoc
 	install -m 755 pandoc/pandoc.opt.wasm $@/bin/pandoc
 	touch $@
 
-INSTALLED_WHEELS=$(addprefix ${INSTALL_DIR}/.,$(addsuffix .installed,$(WHEELS)))
-INSTALLED_LIBS=$(addprefix ${WASIX_SYSROOT}/.,$(addsuffix .installed,$(LIBS)))
+#####     Installing wheels and libs     #####
+
+# Use `install` to install everything
+# Use `install-SUBMODULE` to install a specific submodule
+# Use `install-wheels` to install all wheels
+# Use `install-libs` to install all libs
+
+ALL_INSTALLED_WHEELS=$(addprefix ${INSTALL_DIR}/.,$(addsuffix .installed,$(filter-out $(DONT_INSTALL),$(WHEELS))))
+ALL_INSTALLED_LIBS=$(addprefix ${WASIX_SYSROOT}/.,$(addsuffix .installed,$(filter-out $(DONT_INSTALL),$(LIBS))))
 
 ${WASIX_SYSROOT}/.%.installed: %.tar.xz
 	test -n "${WASIX_SYSROOT}" || (echo "You must set WASIX_SYSROOT to your wasix sysroot" && exit 1)
@@ -203,8 +214,8 @@ ${INSTALL_DIR}/.%.installed: %_wasm32.whl
 	touch $@
 
 install: install-wheels install-libs
-install-wheels: $(INSTALLED_WHEELS)
-install-libs: $(INSTALLED_LIBS)
+install-wheels: $(ALL_INSTALLED_WHEELS)
+install-libs: $(ALL_INSTALLED_LIBS)
 
 INSTALL_WHEELS_TARGETS=$(addprefix install-,$(WHEELS))
 INSTALL_LIBS_TARGETS=$(addprefix install-,$(LIBS))
