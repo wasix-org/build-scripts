@@ -25,6 +25,8 @@ WHEELS+=pycryptodome
 WHEELS+=pycryptodomex
 WHEELS+=pyzbar
 WHEELS+=cython
+WHEELS+=pypandoc
+WHEELS+=pypandoc_binary
 
 # Libs build a .tar.xz file with a sysroot
 LIBS=
@@ -58,9 +60,9 @@ endef
 # BUILD_EXTRA_FLAGS is a space separated list of extra flags to pass to the build script. Defaults to empty
 # PREPARE is a command to run before building the wheel. Defaults to empty. Runs inside the submodule directory
 define build_wheel =
-if test -n "${PREPARE}" ; then source ./cross-venv/bin/activate && cd $(word 1, $(subst _, ,$@)) && _= ${PREPARE} ; fi
-source ./cross-venv/bin/activate && cd $(word 1, $(subst _, ,$@))/${PYPROJECT_PATH} && ${BUILD_ENV_VARS} python3 -m build --wheel ${BUILD_EXTRA_FLAGS}
-cp $(word 1, $(subst _, ,$@))/${PYPROJECT_PATH}/dist/*.whl $@
+if test -n "${PREPARE}" ; then source ./cross-venv/bin/activate && cd $(word 1, $(subst _wasm32, ,$@)) && _= ${PREPARE} ; fi
+source ./cross-venv/bin/activate && cd $(word 1, $(subst _wasm32, ,$@))/${PYPROJECT_PATH} && ${BUILD_ENV_VARS} python3 -m build --wheel ${BUILD_EXTRA_FLAGS}
+cp $(word 1, $(subst _wasm32, ,$@))/${PYPROJECT_PATH}/dist/*.whl $@
 endef
 
 define package_lib =
@@ -104,6 +106,13 @@ pycryptodomex:
 	# If that file exists, pycryptodome will be built with a separate namespace
 	touch pycryptodomex/.separate_namespace
 
+pypandoc_binary:
+	$(reset_submodule)
+	# pyproject.toml only works for the non-binary wheel, because they are still moving to pyproject.toml
+	mv $@/setup_binary.py $@/setup.py
+	rm $@/pyproject.toml
+	# The pandoc binary also needs to be copied, but we do that in the build step
+
 #####     Building wheels     #####
 
 # A target to build a wheel from a python submodule
@@ -127,6 +136,13 @@ msgpack-python_wasm32.whl: PREPARE = make cython
 # Depends on a meson crossfile
 numpy_wasm32.whl: EXTRA_BUILD_FLAGS = -Csetup-args="--cross-file=${CROSSFILE}"
 numpy_wasm32.whl: ${CROSSFILE}
+
+# Needs to have the pypandoc executable in the repo
+pypandoc_binary_wasm32.whl: pypandoc_binary/pypandoc/files/pandoc
+pypandoc_binary/pypandoc/files/pandoc: pypandoc_binary pandoc.tar.xz
+	mkdir -p pypandoc_binary/pypandoc/files
+	tar xfJ pandoc.tar.xz -C pypandoc_binary/pypandoc/files --strip-components=1 bin/pandoc
+	touch $@
 
 # Currently broken, because numpy is missing. The binary in the repo is build manually.
 # Build pandas manually by compiling a native numpy and extracting the wheel into the cross env
