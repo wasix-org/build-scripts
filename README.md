@@ -41,3 +41,4 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * libzbar: 0.23.93
 * libffi: wasix-org/libffi main
 * pandoc: haskell-wasm/pandoc wasm
+* postgresql: 17.5
