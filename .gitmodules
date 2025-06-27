@@ -43,3 +43,6 @@
 [submodule "pypandoc"]
 	path = pypandoc
 	url = https://github.com/JessicaTegner/pypandoc.git
+[submodule "pypandoc_binary"]
+	path = pypandoc_binary
+	url = https://github.com/JessicaTegner/pypandoc.git

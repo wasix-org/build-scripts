@@ -30,9 +30,11 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * six: 1.17.0
 * msgpack: 1.1.0
 * pycryptodome: 3.23.0
+* pycryptodomex: 3.23.0
 * pyzbar: 0.1.9
 * cpython: 3.1.2
 * pypandoc: 1.15
+* pypandoc_binary: 1.15
 
 ### Libraries
 
