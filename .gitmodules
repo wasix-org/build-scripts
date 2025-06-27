@@ -40,3 +40,6 @@
 [submodule "cython"]
 	path = cython
 	url = https://github.com/cython/cython.git
+[submodule "pypandoc"]
+	path = pypandoc
+	url = https://github.com/JessicaTegner/pypandoc.git
