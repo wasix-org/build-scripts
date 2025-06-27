@@ -46,3 +46,6 @@
 [submodule "pypandoc_binary"]
 	path = pypandoc_binary
 	url = https://github.com/JessicaTegner/pypandoc.git
+[submodule "pandoc"]
+	path = pandoc
+	url = https://github.com/haskell-wasm/pandoc.git
