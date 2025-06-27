@@ -30,12 +30,18 @@ WHEELS+=cython
 LIBS=
 LIBS+=zbar
 LIBS+=libffi
+LIBS+=pandoc
 
 SUBMODULES=$(WHEELS) $(LIBS)
 
 BUILT_WHEELS=$(addsuffix _wasm32.whl,$(WHEELS))
 UNPACKED_LIBS=$(addsuffix .build,$(LIBS))
 BUILT_LIBS=$(addsuffix .tar.xz,$(LIBS))
+
+# mkdir but resets the timestamp if it didnt exist before
+define reset_builddir
+bash -c 'rm -rf $$1 ; mkdir $$1 && touch -t 197001010000.00 $$1 || true' .
+endef
 
 define reset_submodule =
 rm -rf $@
@@ -60,6 +66,10 @@ endef
 define package_lib =
 cd $(word 1, $(subst ., ,$@)).build && tar cfJ ../$@ *
 endef
+
+# Command to run something in an environment with a haskell compiler targeting wasi
+# Uses an older hash, because the latest version requires tail call support
+RUN_WITH_HASKELL=nix shell 'gitlab:haskell-wasm/ghc-wasm-meta/6a8b8457df83025bed2a8759f5502725a827104b?host=gitlab.haskell.org' --command
 
 all: $(BUILT_WHEELS)
 
@@ -141,6 +151,7 @@ zbar.build: zbar
 	cd zbar && sed -i 's/^  archive_cmds=$$/  archive_cmds='\''$$CC -shared $$pic_flag $$libobjs $$deplibs $$compiler_flags $$wl-soname $$wl$$soname -o $$lib'\''/' configure
 	cd zbar && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --enable-static --enable-shared --disable-video --disable-rpath --without-imagemagick --without-java --without-qt --without-gtk --without-xv --without-xshm --without-python
 	cd zbar && make
+	$(reset_builddir) $@
 	cd zbar && make install DESTDIR=${PWD}/zbar.build
 	touch $@
 
@@ -148,7 +159,18 @@ libffi.build: libffi
 	cd libffi && autoreconf -vfi
 	cd libffi && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --host="wasm32-wasi" --enable-static --disable-shared --disable-dependency-tracking --disable-builddir --disable-multi-os-directory --disable-raw-api --disable-docs
 	cd libffi && make
+	$(reset_builddir) $@
 	cd libffi && make install DESTDIR=${PWD}/libffi.build
+	touch $@
+
+pandoc.build: pandoc
+	cd pandoc && ${RUN_WITH_HASKELL} wasm32-wasi-cabal update
+	cd pandoc && ${RUN_WITH_HASKELL} wasm32-wasi-cabal build pandoc-cli
+	# Most of these options are copied from https://github.com/tweag/pandoc-wasm/blob/master/.github/workflows/build.yml
+	wasm-opt --experimental-new-eh --low-memory-unused --converge --gufa --flatten --rereloop -Oz $$(find pandoc -type f -name pandoc.wasm) -o pandoc/pandoc.opt.wasm
+	$(reset_builddir) $@
+	mkdir -p $@/bin
+	install -m 755 pandoc/pandoc.opt.wasm $@/bin/pandoc
 	touch $@
 
 INSTALLED_WHEELS=$(addprefix ${INSTALL_DIR}/.,$(addsuffix .installed,$(WHEELS)))
