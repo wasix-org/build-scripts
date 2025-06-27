@@ -24,6 +24,7 @@ WHEELS+=msgpack-python
 WHEELS+=pycryptodome
 WHEELS+=pycryptodomex
 WHEELS+=pyzbar
+WHEELS+=cython
 
 # Libs build a .tar.xz file with a sysroot
 LIBS=
