@@ -27,6 +27,7 @@ WHEELS+=pyzbar
 WHEELS+=cython
 WHEELS+=pypandoc
 WHEELS+=pypandoc_binary
+WHEELS+=psycopg
 
 # Libs build a .tar.xz file with a sysroot
 LIBS=
@@ -131,6 +132,8 @@ pyzbar_wasm32.whl: ${WASIX_SYSROOT}/lib/wasm32-wasi/libzbar.a
 
 # setup.py is not in the root directory
 pytz_wasm32.whl: PYPROJECT_PATH = src
+
+psycopg_wasm32.whl: PYPROJECT_PATH = psycopg
 
 # Build the tzdb locally
 pytz_wasm32.whl: PREPARE = CCC_OVERRIDE_OPTIONS='^--target=x86_64-unknown-linux' CC=clang CXX=clang++ make build
