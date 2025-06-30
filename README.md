@@ -35,6 +35,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * cpython: 3.1.2
 * pypandoc: 1.15
 * pypandoc_binary: 1.15
+* psycopg: 3.2.9
 
 ### Libraries
 

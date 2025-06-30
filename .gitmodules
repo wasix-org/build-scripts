@@ -52,3 +52,6 @@
 [submodule "postgresql"]
 	path = postgresql
 	url = https://git.postgresql.org/git/postgresql.git
+[submodule "psycopg"]
+	path = psycopg
+	url = https://github.com/psycopg/psycopg.git
