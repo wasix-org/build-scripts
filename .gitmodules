@@ -55,3 +55,6 @@
 [submodule "psycopg"]
 	path = psycopg
 	url = https://github.com/psycopg/psycopg.git
+[submodule "psycopg-pool"]
+	path = psycopg-pool
+	url = https://github.com/psycopg/psycopg.git
