@@ -28,6 +28,7 @@ WHEELS+=cython
 WHEELS+=pypandoc
 WHEELS+=pypandoc_binary
 WHEELS+=psycopg
+WHEELS+=psycopg-pool
 WHEELS+=brotlicffi
 WHEELS+=cffi
 
@@ -138,6 +139,7 @@ pyzbar_wasm32.whl: ${WASIX_SYSROOT}/lib/wasm32-wasi/libzbar.a
 pytz_wasm32.whl: PYPROJECT_PATH = src
 
 psycopg_wasm32.whl: PYPROJECT_PATH = psycopg
+psycopg-pool_wasm32.whl: PYPROJECT_PATH = psycopg_pool
 
 # Build the tzdb locally
 pytz_wasm32.whl: PREPARE = CCC_OVERRIDE_OPTIONS='^--target=x86_64-unknown-linux' CC=clang CXX=clang++ make build
