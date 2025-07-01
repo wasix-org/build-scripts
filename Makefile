@@ -28,6 +28,8 @@ WHEELS+=cython
 WHEELS+=pypandoc
 WHEELS+=pypandoc_binary
 WHEELS+=psycopg
+WHEELS+=brotlicffi
+WHEELS+=cffi
 
 # Libs build a .tar.xz file with a sysroot
 LIBS=
@@ -96,7 +98,8 @@ native-venv:
 cross-venv: native-venv python
 	rm -rf ./cross-venv
 	source ./native-venv/bin/activate && python3 -m crossenv python/artifacts/wasix-install/cpython/bin/python3.wasm ./cross-venv --cc wasix-clang --cxx wasix-clang++
-	source ./cross-venv/bin/activate && python3 -m pip install cython build
+	source ./cross-venv/bin/activate && build-pip install cffi
+	source ./cross-venv/bin/activate && pip install cython build
 
 #####     Preparing submodules     #####
 
