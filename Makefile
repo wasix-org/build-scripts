@@ -211,7 +211,7 @@ postgresql.build: postgresql
 	touch $@
 
 
-brotli.build: postgresql
+brotli.build: brotli
 	cd brotli && rm -rf out
 	cd brotli && cmake -DCMAKE_BUILD_TYPE=Release -B out -DCMAKE_INSTALL_PREFIX=/ -DCMAKE_INSTALL_BINDIR=/bin -DCMAKE_INSTALL_INCLUDEDIR=/include -DCMAKE_INSTALL_LIBDIR=/lib/wasm32-wasi
 # Brotli always tries to build the executable (which we dont need), which imports `chown` and `clock`, which we don't provide.
