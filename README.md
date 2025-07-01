@@ -36,7 +36,10 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * pypandoc: 1.15
 * pypandoc_binary: 1.15
 * psycopg: 3.2.9
+* psycopg-binary: 3.2.9
 * psycopg-pool: pool-3.2.6
+
+psycopg3-c is just the sdist of psycopg3-binary
 
 ### Libraries
 

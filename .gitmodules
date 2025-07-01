@@ -58,3 +58,6 @@
 [submodule "psycopg-pool"]
 	path = psycopg-pool
 	url = https://github.com/psycopg/psycopg.git
+[submodule "psycopg-binary"]
+	path = psycopg-binary
+	url = https://github.com/psycopg/psycopg.git
