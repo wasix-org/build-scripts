@@ -35,6 +35,7 @@ LIBS+=zbar
 LIBS+=libffi
 LIBS+=pandoc
 LIBS+=postgresql
+LIBS+=brotli
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -202,6 +203,19 @@ postgresql.build: postgresql
 	cd postgresql && make MAKELEVEL=0 -C src/interfaces
 	$(reset_builddir) $@
 	cd postgresql && make MAKELEVEL=0 -C src/interfaces install DESTDIR=${PWD}/$@
+	touch $@
+
+
+brotli.build: postgresql
+	cd brotli && rm -rf out
+	cd brotli && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/ -DCMAKE_INSTALL_LIBDIR=lib/wasm32-wasi -B out
+# Brotli always tries to build the executable (which we dont need), which imports `chown` and `clock`, which we don't provide.
+# This workaround makes that work during linking, but it is not a proper solution.
+# CCC_OVERRIDE_OPTIONS should not be set during cmake setup, because it will erroneously detect emscripten otherwise.
+# TODO: Implement chown in wasix and unset CCC_OVERRIDE_OPTIONS
+	cd brotli && CCC_OVERRIDE_OPTIONS='^-Wl,--unresolved-symbols=import-dynamic' make -C out
+	$(reset_builddir) $@
+	cd brotli && CCC_OVERRIDE_OPTIONS='^-Wl,--unresolved-symbols=import-dynamic' make -C out install DESTDIR=${PWD}/$@
 	touch $@
 
 #####     Installing wheels and libs     #####
