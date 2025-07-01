@@ -67,3 +67,6 @@
 [submodule "brotlicffi"]
 	path = brotlicffi
 	url = https://github.com/python-hyper/brotlicffi.git
+[submodule "cffi"]
+	path = cffi
+	url = https://github.com/python-cffi/cffi.git

@@ -39,6 +39,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * psycopg-binary: 3.2.9
 * psycopg-pool: pool-3.2.6
 * brotlicffi: 1.1.0.0
+* cffi: 1.17.1
 
 psycopg3-c is just the sdist of psycopg3-binary
 
