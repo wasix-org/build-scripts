@@ -29,6 +29,7 @@ WHEELS+=pypandoc
 WHEELS+=pypandoc_binary
 WHEELS+=psycopg
 WHEELS+=psycopg-pool
+WHEELS+=psycopg-binary
 WHEELS+=brotlicffi
 WHEELS+=cffi
 
@@ -141,6 +142,13 @@ pytz_wasm32.whl: PYPROJECT_PATH = src
 psycopg_wasm32.whl: PYPROJECT_PATH = psycopg
 psycopg-pool_wasm32.whl: PYPROJECT_PATH = psycopg_pool
 
+psycopg-binary_wasm32.whl: PYPROJECT_PATH = psycopg_binary
+psycopg-binary_wasm32.whl: PREPARE = rm -rf psycopg_binary && python3 tools/build/copy_to_binary.py
+# Inject a mock pg_config to the PATH, so the build process can find it
+psycopg-binary_wasm32.whl: BUILD_ENV_VARS = PATH="${PWD}/resources:$$PATH"
+# Pretend we are a normal posix-like target, so we automatically include <endian.h>
+psycopg-binary_wasm32.whl: export CCC_OVERRIDE_OPTIONS = ^-D__linux__=1
+
 # Build the tzdb locally
 pytz_wasm32.whl: PREPARE = CCC_OVERRIDE_OPTIONS='^--target=x86_64-unknown-linux' CC=clang CXX=clang++ make build
 
@@ -206,10 +214,11 @@ pandoc.build: pandoc
 postgresql.build: postgresql
 	cd postgresql && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --without-icu --without-zlib --without-readline
 	cd postgresql && make MAKELEVEL=0 -C src/interfaces
+	cd postgresql && make MAKELEVEL=0 -C src/include
 	$(reset_builddir) $@
 	cd postgresql && make MAKELEVEL=0 -C src/interfaces install DESTDIR=${PWD}/$@
+	cd postgresql && make MAKELEVEL=0 -C src/include install DESTDIR=${PWD}/$@
 	touch $@
-
 
 brotli.build: brotli
 	cd brotli && rm -rf out
