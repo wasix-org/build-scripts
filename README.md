@@ -47,3 +47,4 @@ psycopg3-c is just the sdist of psycopg3-binary
 * libffi: wasix-org/libffi main
 * pandoc: haskell-wasm/pandoc wasm
 * postgresql: 17.5
+* brotli: 1.1.0

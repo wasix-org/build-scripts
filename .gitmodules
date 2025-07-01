@@ -61,3 +61,6 @@
 [submodule "psycopg-binary"]
 	path = psycopg-binary
 	url = https://github.com/psycopg/psycopg.git
+[submodule "brotli"]
+	path = brotli
+	url = https://github.com/google/brotli.git
