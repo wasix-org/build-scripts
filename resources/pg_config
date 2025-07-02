@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# This script mocks the `pg_config` command, as it is used in the psycopg_binary build process.
+test "$1" = "--libdir" && echo "$WASIX_SYSROOT/lib/wasm32-wasi" && exit 0
+test "$1" = "--includedir" && echo "$WASIX_SYSROOT/include" && exit 0
+echo "Usage: $0 --libdir | --includedir" && exit 1
