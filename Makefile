@@ -165,7 +165,7 @@ pytz_wasm32.whl: PREPARE = CCC_OVERRIDE_OPTIONS='^--target=x86_64-unknown-linux'
 msgpack-python_wasm32.whl: PREPARE = make cython
 
 # Depends on a meson crossfile
-numpy_wasm32.whl: EXTRA_BUILD_FLAGS = -Csetup-args="--cross-file=${CROSSFILE}"
+numpy_wasm32.whl: BUILD_EXTRA_FLAGS = -Csetup-args="--cross-file=${CROSSFILE}"
 numpy_wasm32.whl: ${CROSSFILE}
 
 # Needs to have the pypandoc executable in the repo
