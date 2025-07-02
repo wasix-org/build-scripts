@@ -108,6 +108,9 @@ cross-venv: native-venv python
 # A target for making sure a submodule is clean
 # To override the reset behaviour, add a target for your submodule
 $(SUBMODULES): %: #Makefile
+$(SUBMODULES): %: %.prepared
+%.prepared:
+	touch $@
 %: %/.git
 	$(reset_submodule)
 
