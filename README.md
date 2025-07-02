@@ -50,3 +50,4 @@ psycopg3-c is just the sdist of psycopg3-binary
 * pandoc: haskell-wasm/pandoc wasm
 * postgresql: 17.5
 * brotli: 1.1.0
+* zlib: 1.3.1
