@@ -40,6 +40,7 @@ LIBS+=libffi
 LIBS+=pandoc
 LIBS+=postgresql
 LIBS+=brotli
+LIBS+=zlib
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -202,6 +203,13 @@ libffi.build: libffi
 	cd libffi && make
 	$(reset_builddir) $@
 	cd libffi && make install DESTDIR=${PWD}/libffi.build
+	touch $@
+
+zlib.build: zlib
+	cd zlib && ./configure --prefix=/ --libdir=/lib/wasm32-wasi
+	cd zlib && make
+	$(reset_builddir) $@
+	cd zlib && make install DESTDIR=${PWD}/zlib.build
 	touch $@
 
 pandoc.build: pandoc
