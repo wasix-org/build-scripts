@@ -51,3 +51,5 @@ psycopg3-c is just the sdist of psycopg3-binary
 * postgresql: 17.5
 * brotli: 1.1.0
 * zlib: 1.3.1
+* libjpeg-turbo: 3.1.1
+
