@@ -41,6 +41,7 @@ LIBS+=pandoc
 LIBS+=postgresql
 LIBS+=brotli
 LIBS+=zlib
+LIBS+=libjpeg-turbo
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -241,6 +242,16 @@ brotli.build: brotli
 	cd brotli && CCC_OVERRIDE_OPTIONS='^-Wl,--unresolved-symbols=import-dynamic' make -C out
 	$(reset_builddir) $@
 	cd brotli && CCC_OVERRIDE_OPTIONS='^-Wl,--unresolved-symbols=import-dynamic' make -C out install DESTDIR=${PWD}/$@
+	touch $@
+
+libjpeg-turbo.build: libjpeg-turbo
+	cd libjpeg-turbo && rm -rf out
+	# They use a custom version of GNUInstallDirs.cmake does not support libdir starting with prefix.
+	# TODO: Add a sed command to fix that
+	cd libjpeg-turbo && cmake -DCMAKE_BUILD_TYPE=Release -B out -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_INSTALL_LIBDIR='lib/wasm32-wasi'
+	cd libjpeg-turbo && make -C out
+	$(reset_builddir) $@
+	cd libjpeg-turbo && make -C out install DESTDIR=${PWD}/$@
 	touch $@
 
 #####     Installing wheels and libs     #####
