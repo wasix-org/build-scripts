@@ -32,6 +32,7 @@ WHEELS+=psycopg-pool
 WHEELS+=psycopg-binary
 WHEELS+=brotlicffi
 WHEELS+=cffi
+WHEELS+=pillow
 
 # Libs build a .tar.xz file with a sysroot
 LIBS=
@@ -153,6 +154,9 @@ psycopg-binary_wasm32.whl: PREPARE = rm -rf psycopg_binary && python3 tools/buil
 psycopg-binary_wasm32.whl: BUILD_ENV_VARS = PATH="${PWD}/resources:$$PATH"
 # Pretend we are a normal posix-like target, so we automatically include <endian.h>
 psycopg-binary_wasm32.whl: export CCC_OVERRIDE_OPTIONS = ^-D__linux__=1
+
+pillow_wasm32.whl: BUILD_ENV_VARS = PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/pkgconfig
+pillow_wasm32.whl: BUILD_EXTRA_FLAGS = -Cplatform-guessing=disable
 
 # Build the tzdb locally
 pytz_wasm32.whl: PREPARE = CCC_OVERRIDE_OPTIONS='^--target=x86_64-unknown-linux' CC=clang CXX=clang++ make build
