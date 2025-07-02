@@ -70,6 +70,9 @@
 [submodule "cffi"]
 	path = cffi
 	url = https://github.com/python-cffi/cffi.git
+[submodule "pillow"]
+	path = pillow
+	url = https://github.com/python-pillow/Pillow.git
 [submodule "zlib"]
 	path = zlib
 	url = https://github.com/madler/zlib.git
