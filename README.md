@@ -52,4 +52,4 @@ psycopg3-c is just the sdist of psycopg3-binary
 * brotli: 1.1.0
 * zlib: 1.3.1
 * libjpeg-turbo: 3.1.1
-
+* xz: 5.8.1
