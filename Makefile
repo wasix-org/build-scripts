@@ -196,7 +196,7 @@ zbar.build: zbar
 	cd zbar && autoreconf -vfi
 	# Force configure to build shared libraries. This is a hack, but it works.
 	cd zbar && sed -i 's/^  archive_cmds=$$/  archive_cmds='\''$$CC -shared $$pic_flag $$libobjs $$deplibs $$compiler_flags $$wl-soname $$wl$$soname -o $$lib'\''/' configure
-	cd zbar && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --enable-static --enable-shared --disable-video --disable-rpath --without-imagemagick --without-java --without-qt --without-gtk --without-xv --without-xshm --without-python
+	cd zbar && ./configure --prefix=/usr/local --libdir='$${exec_prefix}/lib/wasm32-wasi' --enable-static --enable-shared --disable-video --disable-rpath --without-imagemagick --without-java --without-qt --without-gtk --without-xv --without-xshm --without-python
 	cd zbar && make
 	$(reset_builddir) $@
 	cd zbar && make install DESTDIR=${PWD}/zbar.build
@@ -204,14 +204,14 @@ zbar.build: zbar
 
 libffi.build: libffi
 	cd libffi && autoreconf -vfi
-	cd libffi && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --host="wasm32-wasi" --enable-static --disable-shared --disable-dependency-tracking --disable-builddir --disable-multi-os-directory --disable-raw-api --disable-docs
+	cd libffi && ./configure --prefix=/usr/local --libdir='$${exec_prefix}/lib/wasm32-wasi' --host="wasm32-wasi" --enable-static --disable-shared --disable-dependency-tracking --disable-builddir --disable-multi-os-directory --disable-raw-api --disable-docs
 	cd libffi && make
 	$(reset_builddir) $@
 	cd libffi && make install DESTDIR=${PWD}/libffi.build
 	touch $@
 
 zlib.build: zlib
-	cd zlib && ./configure --prefix=/ --libdir=/lib/wasm32-wasi
+	cd zlib && ./configure --prefix=/usr/local --libdir='$${exec_prefix}/lib/wasm32-wasi'
 	cd zlib && make
 	$(reset_builddir) $@
 	cd zlib && make install DESTDIR=${PWD}/zlib.build
@@ -228,7 +228,7 @@ pandoc.build: pandoc
 	touch $@
 
 postgresql.build: postgresql
-	cd postgresql && ./configure --prefix=/ --libdir=/lib/wasm32-wasi --without-icu --without-zlib --without-readline
+	cd postgresql && ./configure --prefix=/usr/local --libdir='$${exec_prefix}/lib/wasm32-wasi' --without-icu --without-zlib --without-readline
 	cd postgresql && make MAKELEVEL=0 -C src/interfaces
 	cd postgresql && make MAKELEVEL=0 -C src/include
 	$(reset_builddir) $@
@@ -238,7 +238,7 @@ postgresql.build: postgresql
 
 brotli.build: brotli
 	cd brotli && rm -rf out
-	cd brotli && cmake -DCMAKE_BUILD_TYPE=Release -B out -DCMAKE_INSTALL_PREFIX=/ -DCMAKE_INSTALL_BINDIR=/bin -DCMAKE_INSTALL_INCLUDEDIR=/include -DCMAKE_INSTALL_LIBDIR=/lib/wasm32-wasi
+	cd brotli && cmake -DCMAKE_BUILD_TYPE=Release -B out -DCMAKE_INSTALL_LIBDIR='lib/wasm32-wasi'
 # Brotli always tries to build the executable (which we dont need), which imports `chown` and `clock`, which we don't provide.
 # This workaround makes that work during linking, but it is not a proper solution.
 # CCC_OVERRIDE_OPTIONS should not be set during cmake setup, because it will erroneously detect emscripten otherwise.

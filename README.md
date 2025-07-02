@@ -54,3 +54,11 @@ psycopg3-c is just the sdist of psycopg3-binary
 * zlib: 1.3.1
 * libjpeg-turbo: 3.1.1
 * xz: 5.8.1
+
+## Notes
+
+All built library packages should include a pkg-config file for each library.
+
+### [Variables in pkg-config files](https://www.gnu.org/prep/standards/html_node/Directory-Variables.html)
+
+When building libs, we should make shour they include pkg-config files. The pkg config files should have their prefix set to `/usr/local`, exec_prefix set to `${prefix}`, libdir set to `${exec_prefix}/lib/wasm32-wasi`, and includedir set to `${prefix}/include`. In some cases it might be acceptable to have exec_prefix hardcoded to the same value as prefix. In that case libdir should start with `${prefix}` instead of `${exec_prefix}`.
