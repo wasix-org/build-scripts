@@ -43,6 +43,7 @@ LIBS+=postgresql
 LIBS+=brotli
 LIBS+=zlib
 LIBS+=libjpeg-turbo
+LIBS+=xz
 LIBS+=libtiff
 
 DONT_INSTALL=
@@ -257,6 +258,16 @@ libjpeg-turbo.build: libjpeg-turbo
 	cd libjpeg-turbo && make -C out
 	$(reset_builddir) $@
 	cd libjpeg-turbo && make -C out install DESTDIR=${PWD}/$@
+	touch $@
+
+xz.build: xz
+	cd xz && bash autogen.sh
+	# Force configure to build shared libraries. This is a hack, but it works.
+	cd xz && sed -i 's/^  archive_cmds=$$/  archive_cmds='\''$$CC -shared $$pic_flag $$libobjs $$deplibs $$compiler_flags $$wl-soname $$wl$$soname -o $$lib'\''/' configure
+	cd xz && ./configure --prefix=/usr/local --libdir='$${exec_prefix}/lib/wasm32-wasi' --disable-xz --disable-symbol-versions
+	cd xz && make
+	$(reset_builddir) $@
+	cd xz && make install DESTDIR=${PWD}/xz.build
 	touch $@
 
 libtiff.build: libtiff
