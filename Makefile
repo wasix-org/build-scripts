@@ -49,6 +49,7 @@ LIBS+=libwebp
 LIBS+=giflib
 LIBS+=libpng
 LIBS+=SDL3
+LIBS+=openjpeg
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -316,6 +317,13 @@ SDL3.build: SDL3
 	cd SDL3 && make
 	$(reset_builddir) $@
 	cd SDL3 && make install DESTDIR=${PWD}/SDL3.build
+	touch $@
+
+openjpeg.build: openjpeg
+	cd openjpeg && PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/pkgconfig cmake .
+	cd openjpeg && make
+	$(reset_builddir) $@
+	cd openjpeg && make install DESTDIR=${PWD}/openjpeg.build
 	touch $@
 
 #####     Installing wheels and libs     #####
