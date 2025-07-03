@@ -43,6 +43,7 @@ LIBS+=postgresql
 LIBS+=brotli
 LIBS+=zlib
 LIBS+=libjpeg-turbo
+LIBS+=libtiff
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -256,6 +257,16 @@ libjpeg-turbo.build: libjpeg-turbo
 	cd libjpeg-turbo && make -C out
 	$(reset_builddir) $@
 	cd libjpeg-turbo && make -C out install DESTDIR=${PWD}/$@
+	touch $@
+
+libtiff.build: libtiff
+	cd libtiff && bash autogen.sh
+	# Force configure to build shared libraries. This is a hack, but it works.
+	cd libtiff && sed -i 's/^  archive_cmds=$$/  archive_cmds='\''$$CC -shared $$pic_flag $$libobjs $$deplibs $$compiler_flags $$wl-soname $$wl$$soname -o $$lib'\''/' configure
+	cd libtiff && ./configure --prefix=/usr/local --libdir='$${exec_prefix}/lib/wasm32-wasi'
+	cd libtiff && make
+	$(reset_builddir) $@
+	cd libtiff && PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/pkgconfig make install DESTDIR=${PWD}/libtiff.build
 	touch $@
 
 #####     Installing wheels and libs     #####
