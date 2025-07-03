@@ -88,3 +88,6 @@
 [submodule "libwebp"]
 	path = libwebp
 	url = https://chromium.googlesource.com/webm/libwebp
+[submodule "giflib"]
+	path = giflib
+	url = https://git.code.sf.net/p/giflib/code

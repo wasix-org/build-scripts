@@ -56,6 +56,7 @@ psycopg3-c is just the sdist of psycopg3-binary
 * xz: 5.8.1
 * libtiff: 4.7.0
 * libwebp: 1.5.0
+* giflib: 5.2.2
 
 ## Notes
 
