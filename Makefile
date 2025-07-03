@@ -48,6 +48,7 @@ LIBS+=libtiff
 LIBS+=libwebp
 LIBS+=giflib
 LIBS+=libpng
+LIBS+=SDL3
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -308,6 +309,13 @@ libpng.build: libpng
 	cd libpng && make
 	$(reset_builddir) $@
 	cd libpng && make install DESTDIR=${PWD}/libpng.build
+	touch $@
+
+SDL3.build: SDL3
+	cd SDL3 && cmake . -DSDL_UNIX_CONSOLE_BUILD=ON -DSDL_RENDER_GPU=OFF -DSDL_VIDEO=OFF -DSDL_AUDIO=OFF -DSDL_JOYSTICK=OFF -DSDL_HAPTIC=OFF -DSDL_HIDAPI=OFF -DSDL_SENSOR=OFF -DSDL_POWER=OFF -DSDL_DIALOG=OFF -DSDL_STATIC=ON -DCMAKE_INSTALL_LIBDIR='lib/wasm32-wasi'
+	cd SDL3 && make
+	$(reset_builddir) $@
+	cd SDL3 && make install DESTDIR=${PWD}/SDL3.build
 	touch $@
 
 #####     Installing wheels and libs     #####
