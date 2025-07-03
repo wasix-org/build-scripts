@@ -85,3 +85,6 @@
 [submodule "libtiff"]
 	path = libtiff
 	url = https://gitlab.com/libtiff/libtiff.git
+[submodule "libwebp"]
+	path = libwebp
+	url = https://chromium.googlesource.com/webm/libwebp
