@@ -97,3 +97,6 @@
 [submodule "SDL"]
 	path = SDL3
 	url = https://github.com/libsdl-org/SDL.git
+[submodule "openjpeg"]
+	path = openjpeg
+	url = https://github.com/uclouvain/openjpeg.git
