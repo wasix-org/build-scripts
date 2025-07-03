@@ -82,3 +82,6 @@
 [submodule "xz"]
 	path = xz
 	url = https://github.com/tukaani-project/xz.git
+[submodule "libtiff"]
+	path = libtiff
+	url = https://gitlab.com/libtiff/libtiff.git
