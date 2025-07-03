@@ -1,0 +1,10 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib/wasm32-wasi
+includedir=${prefix}/include
+
+Name: giflib
+Description: Reads GIFs
+Version: 5.2.2
+Libs: -L${libdir} -lgif
+Cflags: -I${includedir}
