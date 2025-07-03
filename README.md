@@ -58,6 +58,9 @@ psycopg3-c is just the sdist of psycopg3-binary
 * libwebp: 1.5.0
 * giflib: 5.2.2
 * libpng: 1.6.50
+* SDL: 3.2.16
+
+SDL has all subsystems disabled
 
 ## Notes
 

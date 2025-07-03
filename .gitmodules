@@ -94,3 +94,6 @@
 [submodule "libpng"]
 	path = libpng
 	url = https://git.code.sf.net/p/libpng/code
+[submodule "SDL"]
+	path = SDL3
+	url = https://github.com/libsdl-org/SDL.git
