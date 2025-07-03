@@ -46,6 +46,7 @@ LIBS+=libjpeg-turbo
 LIBS+=xz
 LIBS+=libtiff
 LIBS+=libwebp
+LIBS+=giflib
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -289,6 +290,14 @@ libwebp.build: libwebp
 	cd libwebp && make
 	$(reset_builddir) $@
 	cd libwebp && PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/pkgconfig make install DESTDIR=${PWD}/libwebp.build
+	touch $@
+
+giflib.build: giflib resources/giflib.pc
+	cd giflib && make
+	$(reset_builddir) $@
+	cd giflib && make install PREFIX=/usr/local LIBDIR=/usr/local/lib/wasm32-wasi DESTDIR=${PWD}/giflib.build
+	# giflib does not include a pkg-config file, so we need to install it manually. We need to bump the version in that file as well, when we update the version
+	install -Dm644 ${PWD}/resources/giflib.pc ${PWD}/libwebp.build/usr/local/lib/wasm32-wasi/pkgconfig/giflib.pc
 	touch $@
 
 #####     Installing wheels and libs     #####
