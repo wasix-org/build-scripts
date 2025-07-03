@@ -47,6 +47,7 @@ LIBS+=xz
 LIBS+=libtiff
 LIBS+=libwebp
 LIBS+=giflib
+LIBS+=libpng
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -298,6 +299,15 @@ giflib.build: giflib resources/giflib.pc
 	cd giflib && make install PREFIX=/usr/local LIBDIR=/usr/local/lib/wasm32-wasi DESTDIR=${PWD}/giflib.build
 	# giflib does not include a pkg-config file, so we need to install it manually. We need to bump the version in that file as well, when we update the version
 	install -Dm644 ${PWD}/resources/giflib.pc ${PWD}/libwebp.build/usr/local/lib/wasm32-wasi/pkgconfig/giflib.pc
+	touch $@
+
+libpng.build: libpng
+	# Force configure to build shared libraries. This is a hack, but it works.
+	cd libpng && sed -i 's/^  archive_cmds=$$/  archive_cmds='\''$$CC -shared $$pic_flag $$libobjs $$deplibs $$compiler_flags $$wl-soname $$wl$$soname -o $$lib'\''/' configure
+	cd libpng && ./configure --prefix=/usr/local --libdir='$${exec_prefix}/lib/wasm32-wasi'
+	cd libpng && make
+	$(reset_builddir) $@
+	cd libpng && make install DESTDIR=${PWD}/libpng.build
 	touch $@
 
 #####     Installing wheels and libs     #####
