@@ -320,7 +320,7 @@ SDL3.build: SDL3
 	touch $@
 
 openjpeg.build: openjpeg
-	cd openjpeg && PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/pkgconfig cmake .
+	cd openjpeg && PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/pkgconfig cmake . -DCMAKE_INSTALL_LIBDIR='lib/wasm32-wasi'
 	cd openjpeg && make
 	$(reset_builddir) $@
 	cd openjpeg && make install DESTDIR=${PWD}/openjpeg.build
