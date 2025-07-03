@@ -91,3 +91,6 @@
 [submodule "giflib"]
 	path = giflib
 	url = https://git.code.sf.net/p/giflib/code
+[submodule "libpng"]
+	path = libpng
+	url = https://git.code.sf.net/p/libpng/code
