@@ -33,6 +33,7 @@ WHEELS+=psycopg-binary
 WHEELS+=brotlicffi
 WHEELS+=cffi
 WHEELS+=pillow
+WHEELS+=uvloop
 
 # Libs build a .tar.xz file with a sysroot
 LIBS=
@@ -182,6 +183,9 @@ pypandoc_binary/pypandoc/files/pandoc: pypandoc_binary pandoc.tar.xz
 	mkdir -p pypandoc_binary/pypandoc/files
 	tar xfJ pandoc.tar.xz -C pypandoc_binary/pypandoc/files --strip-components=1 bin/pandoc
 	touch $@
+
+uvloop_wasm32.whl: BUILD_ENV_VARS = WASIX_FORCE_STATIC_DEPENDENCIES=true
+uvloop_wasm32.whl: BUILD_EXTRA_FLAGS = '-C--build-option=build_ext --use-system-libuv'
 
 # Currently broken, because numpy is missing. The binary in the repo is build manually.
 # Build pandas manually by compiling a native numpy and extracting the wheel into the cross env
