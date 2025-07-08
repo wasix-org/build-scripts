@@ -34,6 +34,7 @@ WHEELS+=brotlicffi
 WHEELS+=cffi
 WHEELS+=pillow
 WHEELS+=uvloop
+WHEELS+=mysqlclient
 
 # Libs build a .tar.xz file with a sysroot
 LIBS=
@@ -58,6 +59,7 @@ LIBS+=openssl
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
 DONT_INSTALL+=pypandoc
+DONT_INSTALL+=mysqlclient
 
 SUBMODULES=$(WHEELS) $(LIBS)
 
@@ -188,6 +190,8 @@ pypandoc_binary/pypandoc/files/pandoc: pypandoc_binary pandoc.tar.xz
 
 uvloop_wasm32.whl: BUILD_ENV_VARS = WASIX_FORCE_STATIC_DEPENDENCIES=true
 uvloop_wasm32.whl: BUILD_EXTRA_FLAGS = '-C--build-option=build_ext --use-system-libuv'
+
+mysqlclient_wasm32.whl: BUILD_ENV_VARS = PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/pkgconfig
 
 # Currently broken, because numpy is missing. The binary in the repo is build manually.
 # Build pandas manually by compiling a native numpy and extracting the wheel into the cross env
