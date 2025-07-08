@@ -112,3 +112,6 @@
 [submodule "mariadb-connector-c"]
 	path = mariadb-connector-c
 	url = https://github.com/mariadb-corporation/mariadb-connector-c.git
+[submodule "openssl"]
+	path = openssl
+	url = https://github.com/openssl/openssl

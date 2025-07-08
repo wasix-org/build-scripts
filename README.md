@@ -64,6 +64,7 @@ psycopg3-c is just the sdist of psycopg3-binary
 * openjpeg: 2.5.3
 * libuv: 1.51.0
 * mariadb-connector-c: 3.4.6
+* openssl: 3.5.1
 
 SDL has all subsystems disabled
 
