@@ -115,3 +115,6 @@
 [submodule "openssl"]
 	path = openssl
 	url = https://github.com/openssl/openssl
+[submodule "mysqlclient"]
+	path = mysqlclient
+	url = https://github.com/PyMySQL/mysqlclient.git
