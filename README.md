@@ -42,6 +42,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * cffi: 1.17.1
 * pillow: 11.3.0
 * matplotlib: 3.10.3
+* uvloop: 0.21.0
 
 psycopg3-c is just the sdist of psycopg3-binary
 

@@ -106,3 +106,6 @@
 [submodule "libuv"]
 	path = libuv
 	url = https://github.com/libuv/libuv.git
+[submodule "uvloop"]
+	path = uvloop
+	url = https://github.com/MagicStack/uvloop.git
