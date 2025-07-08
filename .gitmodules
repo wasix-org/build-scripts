@@ -130,3 +130,6 @@
 [submodule "typing_extensions"]
 	path = typing_extensions
 	url = https://github.com/python/typing_extensions.git
+[submodule "typing-inspection"]
+	path = typing-inspection
+	url = https://github.com/pydantic/typing-inspection.git
