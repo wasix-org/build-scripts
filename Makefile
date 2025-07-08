@@ -37,6 +37,7 @@ WHEELS+=pillow
 WHEELS+=uvloop
 WHEELS+=mysqlclient
 WHEELS+=python-qrcode
+WHEELS+=pycparser
 
 PYTHON_WASIX_BINARIES_WHEELS=
 PYTHON_WASIX_BINARIES_WHEELS+=mysqlclient-2.2.7-cp313-cp313-wasix_wasm32
