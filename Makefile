@@ -38,6 +38,10 @@ WHEELS+=uvloop
 WHEELS+=mysqlclient
 WHEELS+=python-qrcode
 WHEELS+=pycparser
+WHEELS+=pydantic
+WHEELS+=typing_extensions
+WHEELS+=typing-inspection
+WHEELS+=annotated-types
 
 PYTHON_WASIX_BINARIES_WHEELS=
 PYTHON_WASIX_BINARIES_WHEELS+=mysqlclient-2.2.7-cp313-cp313-wasix_wasm32
