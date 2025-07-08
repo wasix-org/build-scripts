@@ -52,6 +52,7 @@ LIBS+=libpng
 LIBS+=SDL3
 LIBS+=openjpeg
 LIBS+=libuv
+LIBS+=mariadb-connector-c
 LIBS+=openssl
 
 DONT_INSTALL=
@@ -340,6 +341,37 @@ libuv.build: libuv
 	cd libuv && make -C out install DESTDIR=${PWD}/$@
 	touch $@
 
+# TODO: Improve, after openssl is building
+mariadb-connector-c.build: mariadb-connector-c
+	# cd mariadb-connector-c && rm -rf out
+	cd mariadb-connector-c && PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/pkgconfig cmake -B out \
+	 -DCMAKE_SYSTEM_NAME=WASI \
+	 -DOPENSSL_INCLUDE_DIR=${WASIX_SYSROOT}/usr/local/include \
+	 -DOPENSSL_SSL_LIBRARY=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/libcrypto.a \
+	 -DOPENSSL_CRYPTO_LIBRARY=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/libcrypto.a \
+	 -DZLIB_INCLUDE_DIR=${WASIX_SYSROOT}/usr/local/include \
+	 -DZLIB_LIBRARY=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/libz.a \
+	 -DWITH_MYSQLCOMPAT=ON \
+	 -DCLIENT_PLUGIN_DIALOG=static \
+     -DCLIENT_PLUGIN_SHA256_PASSWORD=static \
+     -DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=static \
+     -DCLIENT_PLUGIN_CLIENT_ED25519=static \
+     -DCLIENT_PLUGIN_PARSEC=static \
+     -DCLIENT_PLUGIN_MYSQL_CLEAR_PASSWORD=static \
+	 -DWITH_EXTERNAL_ZLIB=ON \
+	 -DWITH_UNIT_TESTS=OFF \
+	 -DCMAKE_BUILD_TYPE=Release \
+	 -DINSTALL_INCLUDEDIR='include' \
+	 -DINSTALL_LIBDIR='lib/wasm32-wasi' \
+	 -DINSTALL_PCDIR='lib/wasm32-wasi/pkgconfig'
+	cd mariadb-connector-c && make -j16 -C out
+	$(reset_builddir) $@
+	cd mariadb-connector-c && make -j16 -C out install DESTDIR=${PWD}/$@
+	cd ${PWD}/$@/usr/local/lib/wasm32-wasi/pkgconfig && sed -i "s|${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi|\$${libdir}|g" libmariadb.pc
+	cd ${PWD}/$@/usr/local/lib/wasm32-wasi/pkgconfig && sed "s|libmariadb|libmysql|g" libmariadb.pc > libmysql.pc
+	cd ${PWD}/$@/usr/local/lib/wasm32-wasi && ln -s libmariadbclient.a ./libmysqlclient.a
+	cd ${PWD}/$@/usr/local/lib/wasm32-wasi && ln -s libmariadb.so ./libmysql.so
+	touch ${PWD}/$@/usr/local/lib/wasm32-wasi
 
 openssl.build: openssl
 	# Options adapted from https://github.com/wasix-org/openssl/commit/52cc90976bea2e4f224250ef72cfa992c42bf410
