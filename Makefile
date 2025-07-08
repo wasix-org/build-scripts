@@ -134,7 +134,7 @@ $(SUBMODULES): %: #Makefile
 $(SUBMODULES): %: %.prepared
 %.prepared:
 	touch $@
-%: %/.git
+%: | %/.git
 	$(reset_submodule)
 
 numpy: $(shell find patches -name 'numpy*.patch')
