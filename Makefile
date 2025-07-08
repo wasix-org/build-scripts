@@ -52,6 +52,7 @@ LIBS+=libpng
 LIBS+=SDL3
 LIBS+=openjpeg
 LIBS+=libuv
+LIBS+=openssl
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -339,6 +340,15 @@ libuv.build: libuv
 	cd libuv && make -C out install DESTDIR=${PWD}/$@
 	touch $@
 
+
+openssl.build: openssl
+	# Options adapted from https://github.com/wasix-org/openssl/commit/52cc90976bea2e4f224250ef72cfa992c42bf410
+	# Add no-pic to disable PIC
+	cd openssl && ./Configure no-asm no-tests no-apps no-afalgeng no-dgram no-secure-memory --prefix /usr/local --libdir=lib/wasm32-wasi
+	cd openssl && make -j8
+	$(reset_builddir) $@
+	cd openssl && make install_sw DESTDIR=${PWD}/$@
+	touch $@
 #####     Installing wheels and libs     #####
 
 # Use `install` to install everything
