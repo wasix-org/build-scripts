@@ -4,3 +4,4 @@
 /python
 /*.build
 /*.prepared
+__pycache__
