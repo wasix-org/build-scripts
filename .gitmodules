@@ -100,3 +100,6 @@
 [submodule "openjpeg"]
 	path = openjpeg
 	url = https://github.com/uclouvain/openjpeg.git
+[submodule "matplotlib"]
+	path = matplotlib
+	url = https://github.com/matplotlib/matplotlib.git

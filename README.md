@@ -41,6 +41,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * brotlicffi: 1.1.0.0
 * cffi: 1.17.1
 * pillow: 11.3.0
+* matplotlib: 3.10.3
 
 psycopg3-c is just the sdist of psycopg3-binary
 
