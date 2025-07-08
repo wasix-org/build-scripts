@@ -49,6 +49,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * pydantic: 2.11.7
 * typing_extensions: 4.14.1
 * typing-inspection: 0.4.1
+* annotated-types: 0.7.0
 
 psycopg3-c is just the sdist of psycopg3-binary
 

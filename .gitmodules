@@ -133,3 +133,6 @@
 [submodule "typing-inspection"]
 	path = typing-inspection
 	url = https://github.com/pydantic/typing-inspection.git
+[submodule "annotated-types"]
+	path = annotated-types
+	url = https://github.com/annotated-types/annotated-types.git
