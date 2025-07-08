@@ -6,6 +6,7 @@ CROSSFILE=$(shell pwd)/wasi.meson.cross
 SHELL:=/usr/bin/bash
 
 PWD:=$(shell pwd)
+PYTHON_WASIX_BINARIES:=$(PWD)/../python-wasix-binaries
 
 all: numpy-wasix_wasm32.whl
 
@@ -35,6 +36,12 @@ WHEELS+=cffi
 WHEELS+=pillow
 WHEELS+=uvloop
 WHEELS+=mysqlclient
+
+PYTHON_WASIX_BINARIES_WHEELS=
+PYTHON_WASIX_BINARIES_WHEELS+=mysqlclient-2.2.7-cp313-cp313-wasix_wasm32
+PYTHON_WASIX_BINARIES_WHEELS+=cffi-1.17.1-cp313-cp313-wasix_wasm32
+PYTHON_WASIX_BINARIES_WHEELS+=cryptography-45.0.4-cp313-abi3-any
+PYTHON_WASIX_BINARIES_WHEELS+=pydantic_core-2.33.2-cp313-cp313-any
 
 # Libs build a .tar.xz file with a sysroot
 LIBS=
@@ -153,8 +160,6 @@ $(BUILT_WHEELS): %_wasm32.whl: % cross-venv
 	$(build_wheel)
 
 # Depends on zbar headers being installed
-pyzbar_wasm32.whl: ${WASIX_SYSROOT}/lib/wasm32-wasi/libzbar.a
-
 # setup.py is not in the root directory
 pytz_wasm32.whl: PYPROJECT_PATH = src
 
@@ -393,6 +398,7 @@ openssl.build: openssl
 # Use `install-libs` to install all libs
 
 ALL_INSTALLED_WHEELS=$(addprefix ${INSTALL_DIR}/.,$(addsuffix .installed,$(filter-out $(DONT_INSTALL),$(WHEELS))))
+ALL_INSTALLED_WHEELS+=$(addprefix ${INSTALL_DIR}/.pwb-,$(addsuffix .installed,$(filter-out $(DONT_INSTALL),$(PYTHON_WASIX_BINARIES_WHEELS))))
 ALL_INSTALLED_LIBS=$(addprefix ${WASIX_SYSROOT}/.,$(addsuffix .installed,$(filter-out $(DONT_INSTALL),$(LIBS))))
 
 ${WASIX_SYSROOT}/.%.installed: %.tar.xz
@@ -405,6 +411,11 @@ ${INSTALL_DIR}/.%.installed: %_wasm32.whl
 	unzip -oq $< -d ${INSTALL_DIR}
 	touch $@
 
+${INSTALL_DIR}/.pwb-%.installed: ${PYTHON_WASIX_BINARIES}/wheels/%.whl
+	test -n "${INSTALL_DIR}" || (echo "You must set INSTALL_DIR to the python library path" && exit 1)
+	unzip -oq $< -d ${INSTALL_DIR}
+	touch $@
+
 install: install-wheels install-libs
 install-wheels: $(ALL_INSTALLED_WHEELS)
 install-libs: $(ALL_INSTALLED_LIBS)
@@ -413,6 +424,9 @@ INSTALL_WHEELS_TARGETS=$(addprefix install-,$(WHEELS))
 INSTALL_LIBS_TARGETS=$(addprefix install-,$(LIBS))
 $(INSTALL_WHEELS_TARGETS): install-%: ${INSTALL_DIR}/.%.installed
 $(INSTALL_LIBS_TARGETS): install-%: ${WASIX_SYSROOT}/.%.installed
+# Install a wheel from python-wasix-binaries
+INSTALL_PYTHON_WASIX_BINARIES_WHEELS_TARGETS=$(addprefix install-pwb-,$(PYTHON_WASIX_BINARIES_WHEELS))
+$(INSTALL_PYTHON_WASIX_BINARIES_WHEELS_TARGETS): install-pwb-%: ${INSTALL_DIR}/.pwb-%.installed
 
 clean: $(SUBMODULES)
 	rm -rf python python.webc
