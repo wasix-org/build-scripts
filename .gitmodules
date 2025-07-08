@@ -103,3 +103,6 @@
 [submodule "matplotlib"]
 	path = matplotlib
 	url = https://github.com/matplotlib/matplotlib.git
+[submodule "libuv"]
+	path = libuv
+	url = https://github.com/libuv/libuv.git

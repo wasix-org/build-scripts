@@ -61,6 +61,7 @@ psycopg3-c is just the sdist of psycopg3-binary
 * libpng: 1.6.50
 * SDL: 3.2.16
 * openjpeg: 2.5.3
+* libuv: 1.51.0
 
 SDL has all subsystems disabled
 
