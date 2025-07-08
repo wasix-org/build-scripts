@@ -161,7 +161,9 @@ $(BUILT_WHEELS): %_wasm32.whl: % | cross-venv
 
 # Depends on zbar headers being installed
 # setup.py is not in the root directory
-pytz_wasm32.whl: PYPROJECT_PATH = src
+pytz_wasm32.whl: PYPROJECT_PATH = build/dist
+# Build the tzdb locally
+pytz_wasm32.whl: PREPARE = CCC_OVERRIDE_OPTIONS='^--target=x86_64-unknown-linux' CC=clang CXX=clang++ make build
 
 psycopg_wasm32.whl: PYPROJECT_PATH = psycopg
 psycopg-pool_wasm32.whl: PYPROJECT_PATH = psycopg_pool
@@ -176,8 +178,7 @@ psycopg-binary_wasm32.whl: export CCC_OVERRIDE_OPTIONS = ^-D__linux__=1
 pillow_wasm32.whl: BUILD_ENV_VARS = PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${WASIX_SYSROOT}/usr/local/lib/wasm32-wasi/pkgconfig WASIX_FORCE_STATIC_DEPENDENCIES=true
 pillow_wasm32.whl: BUILD_EXTRA_FLAGS = -Cplatform-guessing=disable
 
-# Build the tzdb locally
-pytz_wasm32.whl: PREPARE = CCC_OVERRIDE_OPTIONS='^--target=x86_64-unknown-linux' CC=clang CXX=clang++ make build
+
 
 # Needs to run a cython command before building the wheel	
 msgpack-python_wasm32.whl: PREPARE = make cython
