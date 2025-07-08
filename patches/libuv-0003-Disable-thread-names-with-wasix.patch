@@ -1,0 +1,40 @@
+From 1bb73ef9fb40787feee73ecb727f259b672a1200 Mon Sep 17 00:00:00 2001
+From: Arshia Ghafoori <arshia001@live.com>
+Date: Tue, 8 Jul 2025 10:57:26 +0200
+Subject: [PATCH 3/9] Disable thread names with wasix
+
+---
+ src/unix/thread.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/src/unix/thread.c b/src/unix/thread.c
+index 34fea364..e7b264d3 100644
+--- a/src/unix/thread.c
++++ b/src/unix/thread.c
+@@ -926,6 +926,10 @@ int uv__thread_setname(const char* name) {
+   pthread_set_name_np(pthread_self(), namebuf);
+   return 0;
+ }
++#elif defined(__wasi__) /* WASI does not support custom thread names. */
++int uv__thread_setname(const char* name) {
++  return UV_ENOSYS;
++}
+ #else
+ int uv__thread_setname(const char* name) {
+   char namebuf[UV_PTHREAD_MAX_NAMELEN_NP];
+@@ -960,6 +964,12 @@ int uv__thread_getname(uv_thread_t* tid, char* name, size_t size) {
+   name[size - 1] = '\0';
+   return 0;
+ }
++#elif defined(__wasi__) /* WASI does not support custom thread names. */
++int uv__thread_getname(uv_thread_t* tid, char* name, size_t size) {
++  snprintf(name, size - 1, "Thread %p", (void*)*tid);
++  name[size - 1] = '\0';
++  return 0;
++}
+ #else
+ int uv__thread_getname(uv_thread_t* tid, char* name, size_t size) {
+   int r;
+-- 
+2.48.1
+

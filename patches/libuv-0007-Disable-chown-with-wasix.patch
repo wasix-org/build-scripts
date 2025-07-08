@@ -1,0 +1,49 @@
+From 10fe298cdc74cb2cf3310fdd7e6f55b70b98e5b5 Mon Sep 17 00:00:00 2001
+From: Arshia Ghafoori <arshia001@live.com>
+Date: Tue, 8 Jul 2025 11:01:42 +0200
+Subject: [PATCH 7/9] Disable chown with wasix
+
+---
+ src/unix/fs.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/unix/fs.c b/src/unix/fs.c
+index 135f5257..59cb447c 100644
+--- a/src/unix/fs.c
++++ b/src/unix/fs.c
+@@ -1329,6 +1329,7 @@ static ssize_t uv__fs_copyfile(uv_fs_t* req) {
+     goto out;
+   }
+ 
++  #ifndef __wasi__ /* WASIX does not yet support chown */
+   /*
+    * Change the ownership and permissions of the destination file to match the
+    * source file.
+@@ -1336,6 +1337,7 @@ static ssize_t uv__fs_copyfile(uv_fs_t* req) {
+    * `result` variable to silence a -Wunused-result warning.
+    */
+   result = fchown(dstfd, src_statsbuf.st_uid, src_statsbuf.st_gid);
++  #endif
+ 
+   if (fchmod(dstfd, src_statsbuf.st_mode) == -1) {
+     err = UV__ERR(errno);
+@@ -1698,12 +1700,16 @@ static void uv__fs_work(struct uv__work* w) {
+     switch (req->fs_type) {
+     X(ACCESS, access(req->path, req->flags));
+     X(CHMOD, chmod(req->path, req->mode));
++#ifndef __wasi__ /* WASIX does not yet support chown */
+     X(CHOWN, chown(req->path, req->uid, req->gid));
++#endif
+     X(CLOSE, uv__fs_close(req->file));
+     X(COPYFILE, uv__fs_copyfile(req));
+     X(FCHMOD, fchmod(req->file, req->mode));
++#ifndef __wasi__ /* WASIX does not yet support chown */
+     X(FCHOWN, fchown(req->file, req->uid, req->gid));
+     X(LCHOWN, lchown(req->path, req->uid, req->gid));
++#endif
+     X(FDATASYNC, uv__fs_fdatasync(req));
+     X(FSTAT, uv__fs_fstat(req->file, &req->statbuf));
+     X(FSYNC, uv__fs_fsync(req));
+-- 
+2.48.1
+

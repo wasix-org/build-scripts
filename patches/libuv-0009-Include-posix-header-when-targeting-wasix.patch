@@ -1,0 +1,26 @@
+From fcc7c9fc05ab3f2f6a78dcea968dcf0be8dc99ec Mon Sep 17 00:00:00 2001
+From: Arshia Ghafoori <arshia001@live.com>
+Date: Tue, 8 Jul 2025 11:02:40 +0200
+Subject: [PATCH 9/9] Include posix header when targeting wasix
+
+---
+ include/uv/unix.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/include/uv/unix.h b/include/uv/unix.h
+index 7c972026..586d6f67 100644
+--- a/include/uv/unix.h
++++ b/include/uv/unix.h
+@@ -66,7 +66,8 @@
+       defined(__MSYS__)   || \
+       defined(__HAIKU__)  || \
+       defined(__QNX__)    || \
+-      defined(__GNU__)
++      defined(__GNU__)    || \
++      defined(__wasi__)
+ # include "uv/posix.h"
+ #endif
+ 
+-- 
+2.48.1
+

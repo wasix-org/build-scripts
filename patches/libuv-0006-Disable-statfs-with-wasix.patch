@@ -1,0 +1,51 @@
+From 1a915599a5b6cdb6165044a551e9077e3ad852e2 Mon Sep 17 00:00:00 2001
+From: Arshia Ghafoori <arshia001@live.com>
+Date: Tue, 8 Jul 2025 11:00:59 +0200
+Subject: [PATCH 6/9] Disable statfs with wasix
+
+---
+ src/unix/fs.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/unix/fs.c b/src/unix/fs.c
+index 717f3fab..135f5257 100644
+--- a/src/unix/fs.c
++++ b/src/unix/fs.c
+@@ -79,7 +79,7 @@
+       defined(__HAIKU__)  || \
+       defined(__QNX__)
+ # include <sys/statvfs.h>
+-#else
++#elif !defined(__wasi__) /* WASIX does not support statfs */
+ # include <sys/statfs.h>
+ #endif
+ 
+@@ -677,6 +677,7 @@ static int uv__fs_closedir(uv_fs_t* req) {
+   return 0;
+ }
+ 
++#ifndef __wasi__ /* WASIX does not support statfs */
+ static int uv__fs_statfs(uv_fs_t* req) {
+   uv_statfs_t* stat_fs;
+ #if defined(__sun)      || \
+@@ -719,6 +720,7 @@ static int uv__fs_statfs(uv_fs_t* req) {
+   req->ptr = stat_fs;
+   return 0;
+ }
++#endif
+ 
+ static ssize_t uv__fs_pathmax_size(const char* path) {
+   ssize_t pathmax;
+@@ -1725,7 +1727,9 @@ static void uv__fs_work(struct uv__work* w) {
+     X(RMDIR, rmdir(req->path));
+     X(SENDFILE, uv__fs_sendfile(req));
+     X(STAT, uv__fs_stat(req->path, &req->statbuf));
++#ifndef __wasi__ /* WASIX does not support statfs */
+     X(STATFS, uv__fs_statfs(req));
++#endif
+     X(SYMLINK, symlink(req->path, req->new_path));
+     X(UNLINK, unlink(req->path));
+     X(UTIME, uv__fs_utime(req));
+-- 
+2.48.1
+

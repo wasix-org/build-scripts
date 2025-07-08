@@ -1,0 +1,33 @@
+From b843582eade5ed7fe64fef9378d545d4f37e0abd Mon Sep 17 00:00:00 2001
+From: Arshia Ghafoori <arshia001@live.com>
+Date: Tue, 8 Jul 2025 10:53:27 +0200
+Subject: [PATCH 1/9] Add WASI to cmake
+
+---
+ CMakeLists.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 73d5aff8..1a8e69c3 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -268,6 +268,16 @@ if(CMAKE_SYSTEM_NAME STREQUAL "AIX")
+        src/unix/aix-common.c)
+ endif()
+ 
++if (CMAKE_SYSTEM_NAME STREQUAL "WASI")
++  list(APPEND uv_defines _GNU_SOURCE)
++  list(APPEND uv_sources
++       src/unix/random-getrandom.c
++       src/unix/posix-hrtime.c
++       src/unix/posix-poll.c
++       src/unix/no-fsevents.c
++       src/unix/no-proctitle.c)
++endif()
++
+ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+   list(APPEND uv_defines _GNU_SOURCE)
+   list(APPEND uv_libraries dl)
+-- 
+2.48.1
+

@@ -1,0 +1,32 @@
+From c1269cc25f454a5dfa02d7d1e85a9f5664d7f0e0 Mon Sep 17 00:00:00 2001
+From: Arshia Ghafoori <arshia001@live.com>
+Date: Tue, 8 Jul 2025 10:59:51 +0200
+Subject: [PATCH 5/9] Disable setgroups with wasix
+
+---
+ src/unix/process.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/unix/process.c b/src/unix/process.c
+index 43e6b798..a9add5a1 100644
+--- a/src/unix/process.c
++++ b/src/unix/process.c
+@@ -382,6 +382,7 @@ static void uv__process_child_init(const uv_process_options_t* options,
+   if (options->cwd != NULL && chdir(options->cwd))
+     uv__write_errno(error_fd);
+ 
++#ifndef __wasi__ /* WASIX does not support setgroups */
+   if (options->flags & (UV_PROCESS_SETUID | UV_PROCESS_SETGID)) {
+     /* When dropping privileges from root, the `setgroups` call will
+      * remove any extraneous groups. If we don't call this, then
+@@ -392,6 +393,7 @@ static void uv__process_child_init(const uv_process_options_t* options,
+      */
+     SAVE_ERRNO(setgroups(0, NULL));
+   }
++#endif
+ 
+   if ((options->flags & UV_PROCESS_SETGID) && setgid(options->gid))
+     uv__write_errno(error_fd);
+-- 
+2.48.1
+

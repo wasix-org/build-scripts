@@ -1,0 +1,26 @@
+From 3fa1d5c65c22e48d13b9c0ea89ca53a21878e93a Mon Sep 17 00:00:00 2001
+From: Arshia Ghafoori <arshia001@live.com>
+Date: Tue, 8 Jul 2025 10:56:23 +0200
+Subject: [PATCH 2/9] Disable slave tty detection with wasix
+
+---
+ src/unix/tty.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/unix/tty.c b/src/unix/tty.c
+index b8610720..64c6c22d 100644
+--- a/src/unix/tty.c
++++ b/src/unix/tty.c
+@@ -125,6 +125,9 @@ static int uv__tty_is_slave(const int fd) {
+     abort();
+ 
+   result = (pts == major(sb.st_rdev));
++#elif defined(__wasi__)
++  /* No way to determine if the fd is a slave tty on this platform. */
++  result = 0;
+ #else
+   /* Fallback to ptsname
+    */
+-- 
+2.48.1
+
