@@ -155,7 +155,7 @@ pypandoc_binary:
 
 # A target to build a wheel from a python submodule
 # To override the build behaviour, add a target for your submodule
-$(BUILT_WHEELS): %_wasm32.whl: % cross-venv
+$(BUILT_WHEELS): %_wasm32.whl: % | cross-venv
 %_wasm32.whl: %
 	$(build_wheel)
 
