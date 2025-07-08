@@ -50,6 +50,7 @@ LIBS+=giflib
 LIBS+=libpng
 LIBS+=SDL3
 LIBS+=openjpeg
+LIBS+=libuv
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -324,6 +325,14 @@ openjpeg.build: openjpeg
 	cd openjpeg && make
 	$(reset_builddir) $@
 	cd openjpeg && make install DESTDIR=${PWD}/openjpeg.build
+	touch $@
+
+libuv.build: libuv
+	cd libuv && rm -rf out
+	cd libuv && cmake -B out -DLIBUV_BUILD_TESTS=OFF -DCMAKE_SYSTEM_NAME=WASI -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR='lib/wasm32-wasi'
+	cd libuv && make -C out
+	$(reset_builddir) $@
+	cd libuv && make -C out install DESTDIR=${PWD}/$@
 	touch $@
 
 #####     Installing wheels and libs     #####
