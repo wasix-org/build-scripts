@@ -127,3 +127,6 @@
 [submodule "pydantic"]
 	path = pydantic
 	url = https://github.com/pydantic/pydantic.git
+[submodule "typing_extensions"]
+	path = typing_extensions
+	url = https://github.com/python/typing_extensions.git
