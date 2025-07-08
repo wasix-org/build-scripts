@@ -44,6 +44,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * matplotlib: 3.10.3
 * uvloop: 0.21.0
 * mysqlclient: 2.2.7
+* python-qrcode: 8.2
 
 psycopg3-c is just the sdist of psycopg3-binary
 
@@ -76,3 +77,15 @@ All built library packages should include a pkg-config file for each library.
 ### [Variables in pkg-config files](https://www.gnu.org/prep/standards/html_node/Directory-Variables.html)
 
 When building libs, we should make shour they include pkg-config files. The pkg config files should have their prefix set to `/usr/local`, exec_prefix set to `${prefix}`, libdir set to `${exec_prefix}/lib/wasm32-wasi`, and includedir set to `${prefix}/include`. In some cases it might be acceptable to have exec_prefix hardcoded to the same value as prefix. In that case libdir should start with `${prefix}` instead of `${exec_prefix}`.
+
+## Analyzing the output
+
+### Check whether python libaries require shared libs
+
+You can run somethign like
+
+```bash
+for f in $(find "$INSTALL_DIR" -name '*.so') ; do echo $f ; wasm-tools print $f | head -n10 | grep '(needed' -C10 ; done
+```
+
+to check which python libraries depend on shared libs. We try to keep that to a minimum, so wheels contain everything that is required to use a package.

@@ -118,3 +118,6 @@
 [submodule "mysqlclient"]
 	path = mysqlclient
 	url = https://github.com/PyMySQL/mysqlclient.git
+[submodule "python-qrcode"]
+	path = python-qrcode
+	url = https://github.com/lincolnloop/python-qrcode.git
