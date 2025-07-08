@@ -121,3 +121,6 @@
 [submodule "python-qrcode"]
 	path = python-qrcode
 	url = https://github.com/lincolnloop/python-qrcode.git
+[submodule "pycparser"]
+	path = pycparser
+	url = https://github.com/eliben/pycparser.git
