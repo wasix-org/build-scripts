@@ -124,3 +124,6 @@
 [submodule "pycparser"]
 	path = pycparser
 	url = https://github.com/eliben/pycparser.git
+[submodule "pydantic"]
+	path = pydantic
+	url = https://github.com/pydantic/pydantic.git

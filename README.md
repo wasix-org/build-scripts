@@ -46,6 +46,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * mysqlclient: 2.2.7
 * python-qrcode: 8.2
 * pycparser: 2.22
+* pydantic: 2.11.7
 
 psycopg3-c is just the sdist of psycopg3-binary
 
