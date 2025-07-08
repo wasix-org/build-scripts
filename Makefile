@@ -73,6 +73,7 @@ DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
 DONT_INSTALL+=pypandoc
 DONT_INSTALL+=mysqlclient
+DONT_INSTALL+=pypandoc_binary
 
 SUBMODULES=$(WHEELS) $(LIBS)
 
