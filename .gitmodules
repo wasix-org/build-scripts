@@ -109,3 +109,6 @@
 [submodule "uvloop"]
 	path = uvloop
 	url = https://github.com/MagicStack/uvloop.git
+[submodule "mariadb-connector-c"]
+	path = mariadb-connector-c
+	url = https://github.com/mariadb-corporation/mariadb-connector-c.git
