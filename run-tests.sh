@@ -1,5 +1,7 @@
 output_file=$(mktemp)
 
+PYTHON_PACKAGE=${1:-"python-with-packages"}
+
 for testfile in tests/*.py; do
     # Extract just the filename without path
     TEST_NAME=$(basename "$testfile")
@@ -8,7 +10,7 @@ for testfile in tests/*.py; do
     echo -e "\033[0;34m▶ Running:\033[0m \033[1m$TEST_NAME\033[0m"
     
     # Run the test
-    $WASMER run --net --mapdir="/usr/lib:$WASIX_SYSROOT/usr/local/lib/wasm32-wasi" --mapdir="/src:$(pwd)" --llvm ../cpython/Tools/wasm /src/$testfile
+    $WASMER run --net --mapdir="/src:$(pwd)" --llvm $PYTHON_PACKAGE /src/$testfile
     EXIT_CODE=$?
     
     # Check result and print colorful outcome
