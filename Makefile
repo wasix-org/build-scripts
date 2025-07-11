@@ -116,14 +116,44 @@ RUN_WITH_HASKELL=nix shell 'gitlab:haskell-wasm/ghc-wasm-meta/6a8b8457df83025bed
 
 all: $(BUILT_WHEELS)
 
-# Targets for preparing a wasm crossenv
-python.webc:
-	wasmer package download zebreus/numpython -o python.webc
+#####     Downloading and uploading the python webc     #####
+
+PYTHON_WEBC="zebreus/python"
+PYTHON_WITH_PACKAGES_WEBC="zebreus/python-with-packages"
+
+python.webc python.version:
+	wasmer package download $(PYTHON_WEBC) -o python.webc
 	touch python.webc
 python: python.webc
 	wasmer package unpack python.webc --out-dir python
 	cp python/modules/python python/artifacts/wasix-install/cpython/bin/python3.wasm
 	touch python
+python-with-packages: python postgresql.build zbar.build libjpeg-turbo.build
+	### Prepare a python release with all the deps
+	# Copy the base python package
+	rm -rf python-with-packages
+	cp -r python python-with-packages
+
+	# Install the wheels
+	INSTALL_DIR=$(PWD)/python-with-packages/artifacts/wasix-install/cpython/lib/python3.13 make install-wheels
+
+	# Install the libs
+	mkdir -p python-with-packages/artifacts/wasix-install/lib
+	cp -L $(PWD)/postgresql.build/usr/local/lib/wasm32-wasi/*.so* python-with-packages/artifacts/wasix-install/lib
+	cp -L $(PWD)/zbar.build/usr/local/lib/wasm32-wasi/libzbar.so* python-with-packages/artifacts/wasix-install/lib
+	cp -L $(PWD)/libjpeg-turbo.build/usr/local/lib/wasm32-wasi/libjpeg.so* python-with-packages/artifacts/wasix-install/lib
+
+	# Copy the python-wasix-binaries wheels (tomlq is provided in the yq package (but only in the python implementation))
+	tomlq -i '.package.name = "$(PYTHON_WITH_PACKAGES_WEBC)"' python-with-packages/wasmer.toml --output-format toml
+	tomlq -i '.fs."/lib" = "./artifacts/wasix-install/lib"' python-with-packages/wasmer.toml --output-format toml
+	tomlq -i '.module[0]."source" = "./artifacts/wasix-install/cpython/bin/python3.wasm"' python-with-packages/wasmer.toml --output-format toml
+
+	echo "Build python-with-packages"
+	echo "To test it run: `bash run-tests.sh`"
+	echo "To publish it run: `wasmer package publish python-with-packages`" 
+
+#####     Preparing a wasm crossenv     #####
+
 native-venv:
 	python3 -m venv ./native-venv
 	source ./native-venv/bin/activate && pip install crossenv
