@@ -148,9 +148,9 @@ python-with-packages: python postgresql.build zbar.build libjpeg-turbo.build
 	tomlq -i '.fs."/lib" = "./artifacts/wasix-install/lib"' python-with-packages/wasmer.toml --output-format toml
 	tomlq -i '.module[0]."source" = "./artifacts/wasix-install/cpython/bin/python3.wasm"' python-with-packages/wasmer.toml --output-format toml
 
-	echo "Build python-with-packages"
-	echo "To test it run: `bash run-tests.sh`"
-	echo "To publish it run: `wasmer package publish python-with-packages`" 
+	echo 'Build python-with-packages'
+	echo 'To test it run: `bash run-tests.sh`'
+	echo 'To publish it run: `wasmer package publish python-with-packages`' 
 
 #####     Preparing a wasm crossenv     #####
 
