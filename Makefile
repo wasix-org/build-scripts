@@ -8,8 +8,6 @@ SHELL:=/usr/bin/bash
 PWD:=$(shell pwd)
 PYTHON_WASIX_BINARIES:=$(PWD)/../python-wasix-binaries
 
-all: numpy-wasix_wasm32.whl
-
 # Wheels build a .whl file
 WHEELS=
 WHEELS+=numpy
@@ -48,6 +46,9 @@ PYTHON_WASIX_BINARIES_WHEELS+=mysqlclient-2.2.7-cp313-cp313-wasix_wasm32
 PYTHON_WASIX_BINARIES_WHEELS+=cffi-1.17.1-cp313-cp313-wasix_wasm32
 PYTHON_WASIX_BINARIES_WHEELS+=cryptography-45.0.4-cp313-abi3-any
 PYTHON_WASIX_BINARIES_WHEELS+=pydantic_core-2.33.2-cp313-cp313-any
+PYTHON_WASIX_BINARIES_WHEELS+=jiter-0.10.0-cp313-cp313-any
+PYTHON_WASIX_BINARIES_WHEELS+=lxml-6.0.0-cp313-cp313-wasix_wasm32
+PYTHON_WASIX_BINARIES_WHEELS+=rpds_py-0.26.0-cp313-cp313-any
 
 # Libs build a .tar.xz file with a sysroot
 LIBS=
@@ -80,6 +81,18 @@ SUBMODULES=$(WHEELS) $(LIBS)
 BUILT_WHEELS=$(addsuffix _wasm32.whl,$(WHEELS))
 UNPACKED_LIBS=$(addsuffix .build,$(LIBS))
 BUILT_LIBS=$(addsuffix .tar.xz,$(LIBS))
+
+WHEELS_TO_INSTALL=$(filter-out $(DONT_INSTALL),$(WHEELS))
+PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL=$(filter-out $(DONT_INSTALL),$(PYTHON_WASIX_BINARIES_WHEELS))
+LIBS_TO_INSTALL=$(filter-out $(DONT_INSTALL),$(LIBS))
+
+BUILT_WHEELS_TO_INSTALL=$(addsuffix _wasm32.whl,$(WHEELS_TO_INSTALL))
+BUILT_PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL=$(addprefix ${PYTHON_WASIX_BINARIES}/wheels/,$(addsuffix .whl,$(PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL)))
+BUILT_LIBS_TO_INSTALL=$(addsuffix .tar.xz,$(LIBS_TO_INSTALL))
+
+ALL_INSTALLED_WHEELS=$(addprefix ${INSTALL_DIR}/.,$(addsuffix .installed,$(WHEELS_TO_INSTALL)))
+ALL_INSTALLED_WHEELS+=$(addprefix ${INSTALL_DIR}/.pwb-,$(addsuffix .installed,$(filter-out $(DONT_INSTALL),$(PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL))))
+ALL_INSTALLED_LIBS=$(addprefix ${WASIX_SYSROOT}/.,$(addsuffix .installed,$(LIBS_TO_INSTALL)))
 
 # mkdir but resets the timestamp if it didnt exist before
 define reset_builddir
@@ -114,12 +127,12 @@ endef
 # Uses an older hash, because the latest version requires tail call support
 RUN_WITH_HASKELL=nix shell 'gitlab:haskell-wasm/ghc-wasm-meta/6a8b8457df83025bed2a8759f5502725a827104b?host=gitlab.haskell.org' --command
 
-all: $(BUILT_WHEELS)
+all: $(BUILT_LIBS_TO_INSTALL) $(BUILT_WHEELS_TO_INSTALL) $(BUILT_PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL)
 
 #####     Downloading and uploading the python webc     #####
 
-PYTHON_WEBC="zebreus/python"
-PYTHON_WITH_PACKAGES_WEBC="zebreus/python-with-packages"
+PYTHON_WEBC=zebreus/python
+PYTHON_WITH_PACKAGES_WEBC=zebreus/python-with-packages
 
 python.webc python.version:
 	wasmer package download $(PYTHON_WEBC) -o python.webc
@@ -128,7 +141,7 @@ python: python.webc
 	wasmer package unpack python.webc --out-dir python
 	cp python/modules/python python/artifacts/wasix-install/cpython/bin/python3.wasm
 	touch python
-python-with-packages: python postgresql.build zbar.build libjpeg-turbo.build
+python-with-packages: python postgresql.build zbar.build libjpeg-turbo.build $(BUILT_WHEELS_TO_INSTALL) $(BUILT_PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL)
 	### Prepare a python release with all the deps
 	# Copy the base python package
 	rm -rf python-with-packages
@@ -435,9 +448,6 @@ openssl.build: openssl
 # Use `install-wheels` to install all wheels
 # Use `install-libs` to install all libs
 
-ALL_INSTALLED_WHEELS=$(addprefix ${INSTALL_DIR}/.,$(addsuffix .installed,$(filter-out $(DONT_INSTALL),$(WHEELS))))
-ALL_INSTALLED_WHEELS+=$(addprefix ${INSTALL_DIR}/.pwb-,$(addsuffix .installed,$(filter-out $(DONT_INSTALL),$(PYTHON_WASIX_BINARIES_WHEELS))))
-ALL_INSTALLED_LIBS=$(addprefix ${WASIX_SYSROOT}/.,$(addsuffix .installed,$(filter-out $(DONT_INSTALL),$(LIBS))))
 
 ${WASIX_SYSROOT}/.%.installed: %.tar.xz
 	test -n "${WASIX_SYSROOT}" || (echo "You must set WASIX_SYSROOT to your wasix sysroot" && exit 1)
