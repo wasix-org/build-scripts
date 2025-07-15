@@ -136,3 +136,6 @@
 [submodule "annotated-types"]
 	path = annotated-types
 	url = https://github.com/annotated-types/annotated-types.git
+[submodule "bzip2"]
+	path = bzip2
+	url = git://sourceware.org/git/bzip2.git
