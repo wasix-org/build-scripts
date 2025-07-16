@@ -103,6 +103,7 @@ define reset_submodule =
 rm -rf $@
 git restore $@
 git submodule update --init --recursive $@
+cd $@ && git clean -dxf >/dev/null 2>&1 || true
 cd $@ && make clean >/dev/null 2>&1 || true
 cd $@ && git am --abort >/dev/null 2>&1 || true
 cd $@ && find ../patches -name '$@*.patch' | sort | xargs -n1 git am
