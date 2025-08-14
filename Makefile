@@ -91,15 +91,17 @@ UNPACKED_SDISTS=$(addprefix pkgs/,$(addsuffix .sdist,$(WHEELS)))
 UNPACKED_LIBS=$(addsuffix .build,$(LIBS))
 BUILT_LIBS=$(addsuffix .tar.xz,$(LIBS))
 
-WHEELS_TO_INSTALL=$(filter-out $(DONT_INSTALL),$(WHEELS))
+DONT_INSTALL_WHEELS=$(addprefix pkgs/,$(addsuffix .whl,$(DONT_INSTALL)))
+
+WHEELS_TO_INSTALL=
 PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL=$(filter-out $(DONT_INSTALL),$(PYTHON_WASIX_BINARIES_WHEELS))
 LIBS_TO_INSTALL=$(filter-out $(DONT_INSTALL),$(LIBS))
 
-BUILT_WHEELS_TO_INSTALL=$(addsuffix .whl,$(WHEELS_TO_INSTALL))
+BUILT_WHEELS_TO_INSTALL=$(filter-out $(DONT_INSTALL_WHEELS),$(BUILT_WHEELS))
 BUILT_PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL=$(addprefix ${PYTHON_WASIX_BINARIES}/wheels/,$(addsuffix .whl,$(PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL)))
 BUILT_LIBS_TO_INSTALL=$(addsuffix .tar.xz,$(LIBS_TO_INSTALL))
 
-ALL_INSTALLED_WHEELS=$(addprefix ${INSTALL_DIR}/.,$(addsuffix .installed,$(WHEELS_TO_INSTALL)))
+ALL_INSTALLED_WHEELS=$(addprefix ${INSTALL_DIR}/.,$(addsuffix .installed,$(BUILT_WHEELS_TO_INSTALL)))
 ALL_INSTALLED_WHEELS+=$(addprefix ${INSTALL_DIR}/.pwb-,$(addsuffix .installed,$(filter-out $(DONT_INSTALL),$(PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL))))
 ALL_INSTALLED_LIBS=$(addprefix ${WASIX_SYSROOT}/.,$(addsuffix .installed,$(LIBS_TO_INSTALL)))
 
@@ -153,6 +155,9 @@ endef
 RUN_WITH_HASKELL=nix shell 'gitlab:haskell-wasm/ghc-wasm-meta/6a8b8457df83025bed2a8759f5502725a827104b?host=gitlab.haskell.org' --command
 
 all: $(BUILT_LIBS_TO_INSTALL) $(BUILT_WHEELS_TO_INSTALL) $(BUILT_PYTHON_WASIX_BINARIES_WHEELS_TO_INSTALL)
+wheels: $(BUILT_WHEELS_TO_INSTALL)
+libs: $(BUILT_LIBS_TO_INSTALL)
+
 
 #####     Downloading and uploading the python webc     #####
 
@@ -275,8 +280,9 @@ pkgs/pillow.whl: BUILD_ENV_VARS = PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CO
 pkgs/pillow.whl: BUILD_EXTRA_FLAGS = -Cplatform-guessing=disable
 
 # We need to install, because we can only specify one sysroot in pkgconfig
-pkgs/lxml.whl: libxml2.build libxslt.build install-libxml2 install-libxslt
-pkgs/lxml.whl: BUILD_ENV_VARS = PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${WASIX_SYSROOT}/libxml2.build/usr/local/lib/wasm32-wasi/pkgconfig:${PWD}/libxslt.build/usr/local/lib/wasm32-wasi/pkgconfig
+pkgs/lxml.tar.gz: libxml2.build libxslt.build | install-libxml2 install-libxslt
+pkgs/lxml.tar.gz: BUILD_ENV_VARS = PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${PWD}/libxml2.build/usr/local/lib/wasm32-wasi/pkgconfig:${PWD}/libxslt.build/usr/local/lib/wasm32-wasi/pkgconfig
+pkgs/lxml.whl: BUILD_ENV_VARS = PKG_CONFIG_SYSROOT_DIR=${WASIX_SYSROOT} PKG_CONFIG_PATH=${PWD}/libxml2.build/usr/local/lib/wasm32-wasi/pkgconfig:${PWD}/libxslt.build/usr/local/lib/wasm32-wasi/pkgconfig
 
 pkgs/dateutil.tar.gz: PREPARE = python3 updatezinfo.py
 
