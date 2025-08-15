@@ -1,0 +1,25 @@
+From cb8a54b0fc576c438fccf0117f65320f3cf72cfc Mon Sep 17 00:00:00 2001
+From: Zebreus <zebreus@zebre.us>
+Date: Fri, 15 Aug 2025 14:27:13 +0200
+Subject: [PATCH] Add wasm support
+
+---
+ numpy/core/include/numpy/npy_cpu.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/numpy/core/include/numpy/npy_cpu.h b/numpy/core/include/numpy/npy_cpu.h
+index a19f8e6bbd..2ecb215c25 100644
+--- a/numpy/core/include/numpy/npy_cpu.h
++++ b/numpy/core/include/numpy/npy_cpu.h
+@@ -106,7 +106,7 @@
+     #define NPY_CPU_RISCV64
+ #elif defined(__loongarch__)
+     #define NPY_CPU_LOONGARCH
+-#elif defined(__EMSCRIPTEN__)
++#elif defined(__EMSCRIPTEN__) || defined(__wasm__)
+     /* __EMSCRIPTEN__ is defined by emscripten: an LLVM-to-Web compiler */
+     #define NPY_CPU_WASM
+ #else
+-- 
+2.48.1
+
