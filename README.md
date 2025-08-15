@@ -135,6 +135,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * lxml: 6.0.0
 * protobuf: 31.1
 * grpc: 1.74.1
+* numpy: 1.26.5
 
 psycopg3-c is just the sdist of psycopg3-binary
 
