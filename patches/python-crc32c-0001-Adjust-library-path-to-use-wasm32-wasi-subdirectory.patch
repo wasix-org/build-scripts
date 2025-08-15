@@ -1,0 +1,25 @@
+From 076acb5def215b5617728004f9baad3567d6692f Mon Sep 17 00:00:00 2001
+From: Zebreus <zebreus@zebre.us>
+Date: Fri, 15 Aug 2025 19:27:41 +0200
+Subject: [PATCH] Adjust library path to use wasm32-wasi subdirectory
+
+---
+ setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/setup.py b/setup.py
+index 5c304b2..a143c6d 100644
+--- a/setup.py
++++ b/setup.py
+@@ -68,7 +68,7 @@ def build_c_extension():
+         #assert os.path.isdir(install_prefix)
+         install_prefix = os.path.realpath(install_prefix)
+         include_dirs = [os.path.join(install_prefix, "include")]
+-        library_dirs = [os.path.join(install_prefix, "lib")]
++        library_dirs = [os.path.join(install_prefix, "lib/wasm32-wasi")]
+ 
+         if platform.system() == "Linux":
+             library_dirs.append(os.path.join(install_prefix, "lib64"))
+-- 
+2.48.1
+

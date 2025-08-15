@@ -46,6 +46,7 @@ WHEELS+=regex
 WHEELS+=lxml
 WHEELS+=protobuf
 WHEELS+=numpy1
+WHEELS+=python-crc32c
 
 #####     List of all wheel in python-wasix-binaries with reasons for inclusion in here     #####
 PYTHON_WASIX_BINARIES_WHEELS=
@@ -418,6 +419,12 @@ pkgs/protobuf.tar.gz: protobuf
 	mkdir -p artifacts
 	install -m666 protobuf/bazel-bin/python/dist/protobuf.tar.gz artifacts
 	ln -sf ../artifacts/protobuf.tar.gz $@
+
+# TODO: Remove patch for python-crc32c once
+#   A: We dont store libs in the wasm32-wasi subdir anymore OR
+#   B: wasix-clang supports automatically adding the wasm32-wasi subdir of every linker path to the linker path
+pkgs/python-crc32c.whl: pkgs/google-crc32c.build
+pkgs/python-crc32c.whl: BUILD_ENV_VARS = CRC32C_INSTALL_PREFIX=${PWD}/pkgs/google-crc32c.build/usr/local WASIX_FORCE_STATIC_DEPENDENCIES=true
 
 #####     Building libraries     #####
 
