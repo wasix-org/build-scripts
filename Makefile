@@ -152,6 +152,7 @@ LIBS+=tinyxml2
 LIBS+=geos
 LIBS+=libxslt
 LIBS+=libxml2
+LIBS+=google-crc32c
 
 DONT_INSTALL=
 # Dont install pypandoc because it uses the same name as pypandoc_binary
@@ -667,6 +668,17 @@ pkgs/libxml2.build: libxml2
 	$(reset_builddir) $@
 	cd libxml2 && DESTDIR=${PWD}/$@ cmake --install static
 	cd libxml2 && DESTDIR=${PWD}/$@ cmake --install shared
+	touch $@
+
+pkgs/google-crc32c.build: google-crc32c
+	cd google-crc32c && rm -rf shared static
+	cd google-crc32c && cmake -B static -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR='lib/wasm32-wasi' -DCMAKE_SKIP_RPATH=YES -DBUILD_SHARED_LIBS=OFF -DCRC32C_BUILD_TESTS=OFF -DCRC32C_USE_GLOG=OFF -DCRC32C_BUILD_BENCHMARKS=OFF 
+	cd google-crc32c && cmake -B shared -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR='lib/wasm32-wasi' -DCMAKE_SKIP_RPATH=YES -DBUILD_SHARED_LIBS=ON -DCRC32C_BUILD_TESTS=OFF -DCRC32C_USE_GLOG=OFF -DCRC32C_BUILD_BENCHMARKS=OFF
+	cd google-crc32c && cmake --build static -j16
+	cd google-crc32c && cmake --build shared -j16
+	$(reset_builddir) $@
+	cd google-crc32c && DESTDIR=${PWD}/$@ cmake --install static
+	cd google-crc32c && DESTDIR=${PWD}/$@ cmake --install shared
 	touch $@
 
 #####     Installing wheels and libs     #####
