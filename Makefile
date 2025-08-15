@@ -47,12 +47,85 @@ WHEELS+=lxml
 WHEELS+=protobuf
 WHEELS+=numpy1
 
+#####     List of all wheel in python-wasix-binaries with reasons for inclusion in here     #####
 PYTHON_WASIX_BINARIES_WHEELS=
-PYTHON_WASIX_BINARIES_WHEELS+=cryptography-45.0.4-cp313-abi3-any
-PYTHON_WASIX_BINARIES_WHEELS+=pydantic_core-2.33.2-cp313-cp313-any
-PYTHON_WASIX_BINARIES_WHEELS+=jiter-0.10.0-cp313-cp313-any
-PYTHON_WASIX_BINARIES_WHEELS+=lxml-6.0.0-cp313-cp313-wasix_wasm32
-PYTHON_WASIX_BINARIES_WHEELS+=rpds_py-0.26.0-cp313-cp313-any
+
+# Included: Not moved to build-scripts yet
+# TODO: Move to build-scripts
+PYTHON_WASIX_BINARIES_WHEELS+=aiohttp-3.12.4-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=cffi-1.17.1-cp313-cp313-wasix_wasm32.whl
+# Included: Rust
+PYTHON_WASIX_BINARIES_WHEELS+=cryptography-45.0.4-cp313-abi3-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=dateutil-cp313-cp313-wasix_wasm32.whl
+# Included: Not moved to build-scripts yet
+# TODO: Move to build-scripts
+PYTHON_WASIX_BINARIES_WHEELS+=ddtrace-3.10.2-cp313-cp313-wasix_wasm32.whl
+# Included: Not moved to build-scripts yet
+# TODO: Move to build-scripts
+PYTHON_WASIX_BINARIES_WHEELS+=google_crc32c-1.7.1-py3-none-any.whl
+# Included: Not moved to build-scripts yet
+# TODO: Move to build-scripts
+PYTHON_WASIX_BINARIES_WHEELS+=httptools-0.6.4-cp313-cp313-wasix_wasm32.whl
+# Included: Rust
+PYTHON_WASIX_BINARIES_WHEELS+=jiter-0.10.0-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=lxml-6.0.0-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=markupsafe-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=msgpack-1.1.0-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=mysqlclient-2.2.7-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=numpy-wasix-cp313-cp313-wasix_wasm32.whl
+# Included: Rust
+PYTHON_WASIX_BINARIES_WHEELS+=orjson-3.11.0-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=pandas-cp313-cp313-wasix_wasm32.whl
+# Included: Not moved to build-scripts yet
+# TODO: Move to build-scripts
+PYTHON_WASIX_BINARIES_WHEELS+=peewee-3.18.2-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=psycopg-3.2.9-py3-none-any.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=psycopg_c-3.2.9-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=psycopg_pool-3.3.0.dev1-py3-none-any.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=pycryptodome-3.23.0-cp37-abi3-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=pycryptodomex-3.23.0-cp37-abi3-wasix_wasm32.whl
+# Included: Rust
+PYTHON_WASIX_BINARIES_WHEELS+=pydantic_core-2.33.2-cp313-cp313-wasix_wasm32.whl
+# Included: Not moved to build-scripts yet
+# TODO: Move to build-scripts
+PYTHON_WASIX_BINARIES_WHEELS+=pynacl-1.5.0-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=pytz-cp313-cp313-wasix_wasm32.whl
+# Included: Not moved to build-scripts yet
+# TODO: Move to build-scripts
+PYTHON_WASIX_BINARIES_WHEELS+=pyyaml-6.0.2-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=regex-2025.5.18-cp313-cp313-wasix_wasm32.whl
+# Included: Rust
+PYTHON_WASIX_BINARIES_WHEELS+=rpds_py-0.26.0-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=shapely-2.1.1-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=six-cp313-cp313-wasix_wasm32.whl
+# Included: Rust
+PYTHON_WASIX_BINARIES_WHEELS+=tiktoken-0.9.0-cp313-cp313-wasix_wasm32.whl
+# Included: Rust
+PYTHON_WASIX_BINARIES_WHEELS+=tokenizers-0.21.3-cp313-cp313-wasix_wasm32.whl
+# Included: Not moved to build-scripts yet. Does not seem native.
+# TODO: Move to build-scripts
+PYTHON_WASIX_BINARIES_WHEELS+=tornado-6.5.2-cp39-abi3-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=tzdata-cp313-cp313-wasix_wasm32.whl
+# Not included: Source build in build-scripts
+#PYTHON_WASIX_BINARIES_WHEELS+=uvloop-0.21.0-cp313-cp313-wasix_wasm32.whl
 
 # Libs build a .tar.xz file with a sysroot
 LIBS=
