@@ -184,3 +184,6 @@
 [submodule "python-crc32c"]
 	path = python-crc32c
 	url = https://github.com/googleapis/python-crc32c.git
+[submodule "google-crc32c"]
+	path = google-crc32c
+	url = https://github.com/google/crc32c.git

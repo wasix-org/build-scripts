@@ -170,6 +170,7 @@ psycopg3-c is just the sdist of psycopg3-binary
 * geos: 3.13.1
 * libxslt: 1.1.43
 * libxml2: 2.14.5
+* google-crc32c: 1.1.2
 
 ### Notes
 
