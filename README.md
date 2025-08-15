@@ -136,6 +136,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * protobuf: 31.1
 * grpc: 1.74.1
 * numpy: 1.26.5
+* python-crc32c: 1.7.1
 
 psycopg3-c is just the sdist of psycopg3-binary
 
