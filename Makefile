@@ -2,11 +2,12 @@ ifndef WASIX_SYSROOT
 $(error You need to define WASIX_SYSROOT)
 endif
 
-CROSSFILE=$(shell pwd)/wasi.meson.cross
 SHELL:=/usr/bin/bash
 
 PWD:=$(shell pwd)
 PYTHON_WASIX_BINARIES:=$(PWD)/../python-wasix-binaries
+MESON_CROSSFILE=$(shell pwd)/resources/wasi.meson.cross
+BAZEL_TOOLCHAIN=$(shell pwd)/resources/bazel-toolchain
 
 # Wheels build a .whl file
 WHEELS=
@@ -243,7 +244,7 @@ pypandoc_binary:
 protobuf:
 	$(reset_submodule)
 	# The bazel toolchain files need to be in the repository
-	cp -r resources/bazel-toolchain protobuf/wasix-toolchain
+	cp -r $(BAZEL_TOOLCHAIN) protobuf/wasix-toolchain
 
 #####     Building wheels     #####
 
@@ -296,8 +297,8 @@ pkgs/dateutil.tar.gz: PREPARE = python3 updatezinfo.py
 pkgs/msgpack-python.tar.gz: PREPARE = make cython
 
 # Depends on a meson crossfile
-pkgs/numpy.whl: BUILD_EXTRA_FLAGS = -Csetup-args="--cross-file=${CROSSFILE}"
-pkgs/numpy.whl: ${CROSSFILE}
+pkgs/numpy.whl: BUILD_EXTRA_FLAGS = -Csetup-args="--cross-file=${MESON_CROSSFILE}"
+pkgs/numpy.whl: ${MESON_CROSSFILE}
 
 pkgs/shapely.whl: pkgs/geos.build
 # TODO: Static build don't work yet, because we would have to specify recursive dependencies manually
@@ -325,8 +326,8 @@ pkgs/mysqlclient.whl: BUILD_ENV_VARS = WASIX_FORCE_STATIC_DEPENDENCIES=true PKG_
 # Use numpy dev build from our registry. Our patches have been merged upstream, so for the next numpy release we can remove this.
 pkgs/pandas.whl: BUILD_ENV_VARS += PIP_CONSTRAINT=$$(F=$$(mktemp) ; echo numpy==2.4.0.dev0 > $$F ; echo $$F)
 pkgs/pandas.whl: BUILD_ENV_VARS += PIP_EXTRA_INDEX_URL=https://pythonindex.wasix.org/simple
-pkgs/pandas.whl: BUILD_EXTRA_FLAGS = -Csetup-args="--cross-file=${CROSSFILE}"
-pkgs/pandas.whl: ${CROSSFILE}
+pkgs/pandas.whl: BUILD_EXTRA_FLAGS = -Csetup-args="--cross-file=${MESON_CROSSFILE}"
+pkgs/pandas.whl: ${MESON_CROSSFILE}
 
 pkgs/protobuf.tar.gz: protobuf
 	mkdir -p pkgs
