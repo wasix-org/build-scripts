@@ -310,7 +310,7 @@ endef
 define build_wheel =
 mkdir -p pkgs
 if test -n "${PREPARE}" ; then source ./cross-venv/bin/activate && cd $(call sdist,$@) && _= ${PREPARE} ; fi
-source ./cross-venv/bin/activate && cd $(call sdist,$@) && ${BUILD_ENV_VARS} python3 -m build --wheel ${BUILD_EXTRA_FLAGS}
+source ./cross-venv/bin/activate && cd $(call sdist,$@) && WASIX_SYSROOT=${PWD}/$(call sysroot,cpython) ${BUILD_ENV_VARS} python3 -m build --wheel ${BUILD_EXTRA_FLAGS}
 mkdir -p artifacts
 cp $(call sdist,$@)/dist/*[2y].whl artifacts
 # [2y] is a hack to match anything ending in wasm32 or any
@@ -320,7 +320,7 @@ endef
 define build_sdist =
 mkdir -p pkgs
 if test -n "${PREPARE}" ; then source ./cross-venv/bin/activate && cd $(call build,$@) && _= ${PREPARE} ; fi
-source ./cross-venv/bin/activate && cd $(call build,$@)/${PYPROJECT_PATH} && ${BUILD_ENV_VARS} python3 -m build --sdist ${BUILD_EXTRA_FLAGS}
+source ./cross-venv/bin/activate && cd $(call build,$@)/${PYPROJECT_PATH} && WASIX_SYSROOT=${PWD}/$(call sysroot,cpython) ${BUILD_ENV_VARS} python3 -m build --sdist ${BUILD_EXTRA_FLAGS}
 mkdir -p artifacts
 cp $(call build,$@)/${PYPROJECT_PATH}/dist/*[0-9].tar.gz artifacts
 ln -sf ../artifacts/$$(basename $(call build,$@)/${PYPROJECT_PATH}/dist/*[0-9].tar.gz) $@
@@ -358,17 +358,20 @@ test: python-with-packages
 
 #####     Downloading and uploading the python webc     #####
 
-PYTHON_WEBC=zebreus/python
-PYTHON_WITH_PACKAGES_WEBC=zebreus/python-with-packages
-PYTHON_WITH_LIBS_WEBC=zebreus/python-with-libs
+PYTHON_WEBC=wasmer/python-native
+PYTHON_WITH_PACKAGES_WEBC=wasmer/python-with-packages
+PYTHON_WITH_LIBS_WEBC=wasmer/python-with-libs
 
-python.webc python.version:
-	wasmer package download $(PYTHON_WEBC) -o python.webc --registry wasmer.io
-	touch python.webc
-python: python.webc
-	wasmer package unpack python.webc --out-dir python
-	cp python/modules/python python/artifacts/wasix-install/cpython/bin/python3.wasm
-	touch python
+pkgs/cpython.webc: resources/python-webc/wasmer.toml $(call sysroot,cpython) $(call lib,cpython)
+	rm -f artifacts/cpython2.webc
+	wasmer package build resources/python-webc --out artifacts/cpython2.webc
+	mv artifacts/cpython2.webc artifacts/cpython.webc
+	ln -sf ../artifacts/cpython.webc $@
+	touch $@
+python: pkgs/cpython.webc
+	wasmer package unpack $< --out-dir $@
+	cp $@/modules/python $@/pkgs/cpython.lib/usr/local/bin/python3.wasm
+	touch $@
 python-with-libs: python | $(call lib,postgresql) $(call lib,zbar) $(call lib,libjpeg-turbo) $(call lib,geos)
 	### Prepare a python release with all the deps
 	# Copy the base python package
@@ -376,42 +379,32 @@ python-with-libs: python | $(call lib,postgresql) $(call lib,zbar) $(call lib,li
 	cp -r python python-with-libs
 
 	# Install the libs
-	mkdir -p python-with-libs/artifacts/wasix-install/lib
-	cp -L $(PWD)/$(call lib,postgresql)/usr/local/lib/wasm32-wasi/*.so* python-with-libs/artifacts/wasix-install/lib
-	cp -L $(PWD)/$(call lib,zbar)/usr/local/lib/wasm32-wasi/libzbar.so* python-with-libs/artifacts/wasix-install/lib
-	cp -L $(PWD)/$(call lib,libjpeg-turbo)/usr/local/lib/wasm32-wasi/libjpeg.so* python-with-libs/artifacts/wasix-install/lib
+	mkdir -p python-with-libs/extra-libs
+	cp -L $(PWD)/$(call lib,postgresql)/usr/local/lib/wasm32-wasi/*.so* python-with-libs/extra-libs
+	cp -L $(PWD)/$(call lib,zbar)/usr/local/lib/wasm32-wasi/libzbar.so* python-with-libs/extra-libs
+	cp -L $(PWD)/$(call lib,libjpeg-turbo)/usr/local/lib/wasm32-wasi/libjpeg.so* python-with-libs/extra-libs
 	# TODO: Build shapely without a shared geos dep
-	cp -L $(PWD)/$(call lib,geos)/usr/local/lib/wasm32-wasi/libgeos*.so* python-with-libs/artifacts/wasix-install/lib
+	cp -L $(PWD)/$(call lib,geos)/usr/local/lib/wasm32-wasi/libgeos*.so* python-with-libs/extra-libs
 
 	# Copy the python-wasix-binaries wheels (tomlq is provided in the yq package (but only in the python implementation))
 	tomlq -i '.package.name = "$(PYTHON_WITH_LIBS_WEBC)"' python-with-libs/wasmer.toml --output-format toml
-	tomlq -i '.fs."/lib" = "./artifacts/wasix-install/lib"' python-with-libs/wasmer.toml --output-format toml
-	tomlq -i '.module[0]."source" = "./artifacts/wasix-install/cpython/bin/python3.wasm"' python-with-libs/wasmer.toml --output-format toml
+	tomlq -i '.fs."/lib" = "./extra-libs"' python-with-libs/wasmer.toml --output-format toml
+	tomlq -i '.module[0]."source" = "./pkgs/cpython.lib/usr/local/bin/python3.wasm"' python-with-libs/wasmer.toml --output-format toml
 
 	echo 'Build python-with-libs'
 	echo 'To test it run: `bash run-tests.sh`'
 	echo 'To publish it run: `wasmer package publish --registry wasmer.io python-with-libs`' 
-python-with-packages: python | $(call lib,postgresql) $(call lib,zbar) $(call lib,libjpeg-turbo) $(call lib,geos) $(BUILT_WHEELS_TO_INSTALL) $(PWB_WHEELS_TO_INSTALL)
+python-with-packages: python-with-libs | $(BUILT_WHEELS_TO_INSTALL) $(PWB_WHEELS_TO_INSTALL)
 	### Prepare a python release with all the deps
 	# Copy the base python package
 	rm -rf python-with-packages
-	cp -r python python-with-packages
+	cp -r python-with-libs python-with-packages
 
 	# Install the wheels
-	WHEELS_DESTDIR=$(PWD)/python-with-packages/artifacts/wasix-install/cpython/lib/python3.13 make install-wheels
-
-	# Install the libs
-	mkdir -p python-with-packages/artifacts/wasix-install/lib
-	cp -L $(PWD)/$(call lib,postgresql)/usr/local/lib/wasm32-wasi/*.so* python-with-packages/artifacts/wasix-install/lib
-	cp -L $(PWD)/$(call lib,zbar)/usr/local/lib/wasm32-wasi/libzbar.so* python-with-packages/artifacts/wasix-install/lib
-	cp -L $(PWD)/$(call lib,libjpeg-turbo)/usr/local/lib/wasm32-wasi/libjpeg.so* python-with-packages/artifacts/wasix-install/lib
-	# TODO: Build shapely without a shared geos dep
-	cp -L $(PWD)/$(call lib,geos)/usr/local/lib/wasm32-wasi/libgeos*.so* python-with-packages/artifacts/wasix-install/lib
+	WHEELS_DESTDIR=$(PWD)/python-with-packages/pkgs/cpython.lib/usr/local/lib/python3.13 make install-wheels
 
 	# Copy the python-wasix-binaries wheels (tomlq is provided in the yq package (but only in the python implementation))
 	tomlq -i '.package.name = "$(PYTHON_WITH_PACKAGES_WEBC)"' python-with-packages/wasmer.toml --output-format toml
-	tomlq -i '.fs."/lib" = "./artifacts/wasix-install/lib"' python-with-packages/wasmer.toml --output-format toml
-	tomlq -i '.module[0]."source" = "./artifacts/wasix-install/cpython/bin/python3.wasm"' python-with-packages/wasmer.toml --output-format toml
 
 	echo 'Build python-with-packages'
 	echo 'To test it run: `bash run-tests.sh`'
@@ -424,7 +417,7 @@ native-venv:
 	source ./native-venv/bin/activate && pip install crossenv
 cross-venv: native-venv python
 	rm -rf ./cross-venv
-	source ./native-venv/bin/activate && python3 -m crossenv python/artifacts/wasix-install/cpython/bin/python3.wasm ./cross-venv --cc wasix-clang --cxx wasix-clang++
+	source ./native-venv/bin/activate && python3 -m crossenv python/pkgs/cpython.lib/usr/local/bin/python3.wasm ./cross-venv --cc wasix-clang --cxx wasix-clang++
 	source ./cross-venv/bin/activate && PIP_EXTRA_INDEX_URL=https://pythonindex.wasix.org/simple build-pip install cffi
 	source ./cross-venv/bin/activate && PIP_EXTRA_INDEX_URL=https://pythonindex.wasix.org/simple pip install build six
 
