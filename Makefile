@@ -210,6 +210,7 @@ LIBS+=sqlite
 LIBS+=wasix-libc
 LIBS+=libcxx
 LIBS+=compiler-rt
+LIBS+=cpython
 
 # Packages that are broken can be marked as DONT_BUILD
 # Packages that work but should not be included in the default install can be marked as DONT_INSTALL
@@ -1158,7 +1159,14 @@ $(call lib,compiler-rt): $(call lib,wasix-libc) ${CMAKE_TOOLCHAIN}
 	cd $(call build,$@) && DESTDIR=${PWD}/$@ cmake --install build
 	touch $@
 
-$(call sysroot,python): $(call tarxz,wasix-libc) $(call tarxz,compiler-rt) $(call tarxz,libcxx) $(call tarxz,readline) $(call tarxz,ncurses) $(call tarxz,openssl) $(call tarxz,zlib) $(call tarxz,icu) $(call tarxz,sqlite) $(call tarxz,util-linux) $(call tarxz,libffi) $(call tarxz,xz)
+$(call sysroot,cpython): $(call tarxz,wasix-libc) $(call tarxz,compiler-rt) $(call tarxz,libcxx) $(call tarxz,readline) $(call tarxz,ncurses) $(call tarxz,openssl) $(call tarxz,zlib) $(call tarxz,icu) $(call tarxz,sqlite) $(call tarxz,util-linux) $(call tarxz,libffi) $(call tarxz,xz)
+
+$(call lib,cpython): $(call sysroot,cpython)
+	mkdir -p build
+	cd $(call build,$@) && WASIX_SYSROOT=${PWD}/$(call sysroot,cpython) CC=/usr/bin/clang CXX=/usr/bin/clang++ bash wasix-full.sh
+	$(reset_install_dir) $@
+	cd $(call build,$@) && make -C builddir/wasix install DESTDIR="${PWD}/$@"
+	touch $@
 
 #####     Installing wheels and libs     #####
 
