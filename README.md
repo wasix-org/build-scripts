@@ -258,6 +258,7 @@ psycopg3-c is just the sdist of psycopg3-binary
   * This is the commit that is currently used by wasix-libc
 * compiler-rt: wasix-org/llvm-project 6bb93a243f6d15855f485f5aec3810d9e2de150d
   * This is the commit that is currently used by wasix-libc
+* cpython: wasix-org/cpython feat/dl
 <!-- LIB_VERSIONS_END -->
 
 ### Notes

@@ -274,3 +274,6 @@
 [submodule "pkgs/aspw.source"]
 	path = pkgs/aspw.source
 	url = https://github.com/rogerbinns/apsw.git
+[submodule "pkgs/cpython.source"]
+	path = pkgs/cpython.source
+	url = https://github.com/wasix-org/cpython.git
