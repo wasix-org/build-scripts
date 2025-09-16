@@ -1,0 +1,8 @@
+LICENSE
+README.md
+pyproject.toml
+wasmer_build_scripts.egg-info/PKG-INFO
+wasmer_build_scripts.egg-info/SOURCES.txt
+wasmer_build_scripts.egg-info/dependency_links.txt
+wasmer_build_scripts.egg-info/requires.txt
+wasmer_build_scripts.egg-info/top_level.txt

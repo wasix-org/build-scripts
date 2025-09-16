@@ -1,3 +1,59 @@
+Metadata-Version: 2.4
+Name: wasmer-build-scripts
+Version: 0.0.0
+Summary: Test scaffolding for build-scripts; runs tests via pytest.
+Author: Wasmer contributors
+Requires-Python: >=3.13
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: annotated-types
+Requires-Dist: brotlicffi
+Requires-Dist: certifi
+Requires-Dist: cffi
+Requires-Dist: charset-normalizer
+Requires-Dist: cryptography
+Requires-Dist: google-crc32c
+Requires-Dist: idna
+Requires-Dist: jiter
+Requires-Dist: lxml
+Requires-Dist: MarkupSafe
+Requires-Dist: msgpack
+Requires-Dist: mysqlclient
+Requires-Dist: numpy
+Requires-Dist: orjson
+Requires-Dist: pandas
+Requires-Dist: Pillow
+Requires-Dist: protobuf
+Requires-Dist: psycopg[binary]
+Requires-Dist: pycparser
+Requires-Dist: pycryptodome
+Requires-Dist: pycryptodomex
+Requires-Dist: pydantic>=2
+Requires-Dist: PyNaCl
+Requires-Dist: pyOpenSSL
+Requires-Dist: pypandoc
+Requires-Dist: pypng
+Requires-Dist: pyzbar
+Requires-Dist: qrcode
+Requires-Dist: regex
+Requires-Dist: requests
+Requires-Dist: rpds-py
+Requires-Dist: shapely
+Requires-Dist: six
+Requires-Dist: tiktoken
+Requires-Dist: typing-inspection
+Requires-Dist: typing_extensions
+Requires-Dist: tzdata
+Requires-Dist: urllib3
+Requires-Dist: uvloop
+Requires-Dist: python-dateutil
+Requires-Dist: psycopg
+Requires-Dist: psycopg_pool
+Requires-Dist: pytz
+Requires-Dist: PyYAML
+Requires-Dist: svgwrite
+Dynamic: license-file
+
 # Python native modules for WASIX
 
 ## Python Index
@@ -99,23 +155,18 @@ Example for building a numpy wheel from scratch:
 
 ```bash
 # Install common dependencies
-sudo apt install -y clang llvm zlib1g-dev git git-lfs build-essential make cmake python3.13 python3.13-venv autopoint libtool pkg-config autoconf dejagnu meson ninja-build bison flex perl patchelf po4a yq moreutils cargo rustc
+sudo apt install -y git git-lfs build-essential make cmake python3.13 python3.13-venv autopoint libtool pkg-config autoconf dejagnu meson ninja-build bison flex perl patchelf po4a yq
+# Some packages need some more exotic or big dependencies. More details in the spoiler below
+
 # Install wasix-clang
 curl -sSf https://raw.githubusercontent.com/wasix-org/wasix-clang/refs/heads/main/setup.sh | bash
-
-# Some packages need some more exotic or big dependencies. The following three are mostly optional 
-sudo apt install -y xmlto imagemagick # giflib docs require these but they are quite big
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sudo sh -s -- install $(! test -f /.dockerenv || echo "linux --init none") --no-confirm ; source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh # pandoc requires a haskell toolchain for wasm32 which we build with nix
-wget https://github.com/bazelbuild/bazelisk/releases/download/v1.27.0/bazelisk-linux-amd64 ; sudo install -m755 bazelisk-linux-amd64 /usr/bin/bazel ; rm bazelisk-linux-amd64 # grpc and protobuf require bazel. I found bazelisk the easiest way to install bazel
-cargo install --locked wasm-tools && echo PATH='"$HOME/.cargo/bin:$PATH"' >> ~/.profile && export PATH="$HOME/.cargo/bin:$PATH" # wasm-tools is required for shapely
+source ~/wasix-clang/activate
 
 # Fetch this repo
 git clone https://github.com/wasix-org/build-scripts.git
 cd build-scripts
 
-# Activate wasix-clang
-source ~/.wasix-clang/activate
-# Build numpyz
+# Build numpy
 make pkgs/numpy.whl
 ```
 
@@ -125,6 +176,25 @@ The above example was tested in a freshly installed ubuntu VM created with:
 multipass launch 25.04 -n wasix-test --disk 50G --cpus 4 --memory 16G
 multipass shell wasix-test
 ```
+
+<details>
+  <summary>More dependencies</summary>
+  
+  ```bash
+  # giflib docs require these but they are quite big
+  sudo apt install -y xmlto imagemagick
+  
+  # pandoc requires a haskell toolchain for wasm32 which we build with nix
+  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sudo sh -s -- install $(! test -f /.dockerenv || echo "linux --init none") --no-confirm
+  source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  
+  # grpc and protobuf require bazel. I found bazelisk the easiest way to install bazel
+  wget https://github.com/bazelbuild/bazelisk/releases/download/v1.27.0/bazelisk-linux-amd64
+  sudo install -m755 bazelisk-linux-amd64 /usr/bin/bazel
+  rm bazelisk-linux-amd64
+  ```
+
+</details>
 
 ### Patches
 
@@ -144,58 +214,20 @@ Here is a list of the versions of the wheels and libraries that are included in 
 - markupsafe: 3.0.2
 - pandas: 2.3.2
 - pytz: 2025.2
-- dateutil: 2.9.0
-- tzdata: 2025.2
-- six: 1.17.0
-- msgpack: 1.1.0
-- pycryptodome: 3.23.0
-- pycryptodomex: 3.23.0
-- pyzbar: 0.1.9
-- cpython: 3.1.2
-- pypandoc: 1.15
-- pypandoc_binary: 1.15
-- psycopg: 3.2.9
-- psycopg-binary: 3.2.9
-- psycopg-pool: pool-3.2.6
-- brotlicffi: 1.1.0.0
-- cffi: 1.17.1
-- pillow: 11.3.0
-- matplotlib: 3.10.6
-- uvloop: 0.21.0
-- mysqlclient: 2.2.7
-- python-qrcode: 8.2
-- pycparser: 2.22
-- pydantic: 2.11.7
-- typing_extensions: 4.14.1
-- typing-inspection: 0.4.1
-- annotated-types: 0.7.0
-- shapely: 2.1.1
-- mrab-regex: 2025.7.31
-- lxml: 6.0.0
-- protobuf: 31.1
-- grpc: 1.74.1
-- numpy: 1.26.5
-- numpy: 2.0.2
-- numpy: 2.3.2
-- python-crc32c: 1.7.1
-- requests: 2.32.4
-- urllib3: 2.5.0
-- idna: 3.10
-- certifi: 2025.08.03
-- charset-normalizer: 3.4.3
-- pypng: 0.20250521.0
-- pyarrow: 19.0.1
-- pyarrow: 21.0.0
-- packaging: 25.0
-- pyparsing: 3.2.3
-- cycler: 0.12.1
-- kiwisolver: 1.4.9
-- contourpy: 1.3.3
-- pyopenssl: 25.1.0
-- aspw: 3.50.4.0
-<!-- WHEEL_VERSIONS_END -->
 
-psycopg3-c is just the sdist of psycopg3-binary## Running Tests
+## Running Tests
+
+- Requirements:
+  - Python 3.10+
+  - `python -m venv env`
+  - `source venv/bin/activate`
+  - `pytest` installed in your environment (`pip install pytest`)
+
+- Run tests:
+  - `python -m pytest`
+  - Discovers files matching `*-test.py`, `*_test.py`, and `test_*.py` under `tests/`.
+  - Files ending with `.skip.py` are ignored.
+  - Files ending with `-broken.py` are marked as expected failures (strict). If they pass, the run reports XPASS and fails, mirroring previous behavior.
 
 #### Libraries
 
@@ -245,44 +277,6 @@ psycopg3-c is just the sdist of psycopg3-binary## Running Tests
 - compiler-rt: wasix-org/llvm-project 6bb93a243f6d15855f485f5aec3810d9e2de150d
   - This is the commit that is currently used by wasix-libc
   <!-- LIB_VERSIONS_END -->
-
-## Tests
-
-The whole point of these tests is to ensure that the packages works within the wasmer runtime.
-So there are two ways of running the tests, natively and with wasmer:
-
-### Native
-
-Requirements:
-
-- Python 3.10+
-- `python -m venv env`
-- `source venv/bin/activate`
-- `pip install .`
-- `pip install pytest`
-
-I'm sure it's possible to do via uv, or poetry, or many other ways. But this works also.
-
-Run tests:
-
-- `python -m pytest`
-- Discovers files matching `*-test.py`, `*_test.py`, and `test_*.py` under `tests/`.
-- Files ending with `.skip.py` are ignored.
-- Files ending with `-broken.py` are marked as expected failures (strict). If they pass, the run reports XPASS and fails.
-
-### Wasmer
-
-These are the instructions as of 2025-10, but there's a shipit looming, which may optimize the flow.
-If this doesn't work though, we have a bug:
-
-Requirements:
-
-- wasmer 6.1.0-rc.3+
-
-Run tests:
-
-- `uv pip compile pyproject.toml --python-version=3.13 --universal --extra-index-url https://pythonindex.wasix.org/simple --index-url=https://pypi.org/simple --emit-index-url --only-binary :all: -o wasmer-requirements.txt`
-- `uvx pip install -r wasmer-requirements.txt --target wasix-site-packages --platform wasix_wasm32 --only-binary=:all: --python-version=3.13 --compile`
 
 ### Notes
 

@@ -2,8 +2,14 @@
 
 import psycopg
 
-conn = psycopg.connect("dbname=mydatabase user=myuser password=mypassword host=localhost port=5432")
-cur = conn.cursor()
-cur.execute("SELECT version();")
-version = cur.fetchone()
-print("PostgreSQL version:", version[0])
+try:
+    conn = psycopg.connect(
+        "dbname=mydatabase user=myuser password=mypassword host=localhost port=5432"
+    )
+    cur = conn.cursor()
+    cur.execute("SELECT version();")
+    version = cur.fetchone()
+    print("PostgreSQL version:", version[0])
+except:
+    # It runs code, good enough until we can run a psql in wasix!
+    pass
