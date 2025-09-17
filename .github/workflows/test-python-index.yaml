@@ -28,6 +28,7 @@ jobs:
           python-version: ${{ inputs.python-version }}
       - name: Setup environment
         run: |
+          sudo apt-get install libzbar0
           pip install .
           pip install pytest
       # Validate that the python tests themselves are valid
