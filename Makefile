@@ -1169,6 +1169,12 @@ $(call lib,libb2):
 	cd $(call build,$@) && make install DESTDIR=${PWD}/$@
 	touch $@
 
+$(call lib,zstd):
+	cd $(call build,$@) && make -j16
+	$(reset_install_dir) $@
+	cd $(call build,$@) && make install DESTDIR=${PWD}/$@ LIBDIR=/usr/local/lib/wasm32-wasi
+	touch $@
+
 #####     Installing wheels and libs     #####
 
 # Use `install` to install everything
