@@ -13,7 +13,7 @@ MESON_CROSSFILE=${PWD}/resources/wasi.meson.cross
 BAZEL_TOOLCHAIN=${PWD}/resources/bazel-toolchain
 CMAKE_TOOLCHAIN=${PWD}/resources/wasix-toolchain.cmake
 PATCH_DIR=${PWD}/patches
-GIT:=git -c 'user.name=build-scripts' -c 'user.email=wasix@wasmer.io'
+GIT:=git -c 'user.name=build-scripts' -c 'user.email=wasix@wasmer.io' -c 'init.defaultBranch=main'
 
 # Install libs to the normal sysroot if not specified otherwise
 LIBS_DESTDIR?=${WASIX_SYSROOT}
