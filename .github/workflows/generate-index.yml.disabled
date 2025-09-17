@@ -5,10 +5,10 @@ on:
     branches:
       - main # Re-generate index on every change to the default branch
       - qa-209-convert-build-scripts-into-a-python-test-project
-    paths:
-      - artifacts/*.whl
-      - generate-index.py
-      - python-wasix-binaries
+    # paths:
+    #   - artifacts/*.whl
+    #   - generate-index.py
+    #   - python-wasix-binaries
   workflow_dispatch:
 
 # Minimal permissions required by the official Pages deployment action
