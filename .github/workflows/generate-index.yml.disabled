@@ -81,7 +81,7 @@ jobs:
       matrix:
         python-version: ["3.13"]
         wasmer-version: ["v6.1.0-rc.3"]
-    uses: ./.github/workflows/test.yml
+    uses: ./.github/workflows/test-python-index.yaml
     with:
       python-version: ${{ matrix.python-version }}
       wasmer-version: ${{ matrix.wasmer-version }}
