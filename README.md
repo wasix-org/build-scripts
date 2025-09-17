@@ -260,6 +260,7 @@ psycopg3-c is just the sdist of psycopg3-binary
   * This is the commit that is currently used by wasix-libc
 * cpython: wasix-org/cpython feat/dl
 * libb2: 0.98.1
+* zstd: 1.5.7
 <!-- LIB_VERSIONS_END -->
 
 ### Notes

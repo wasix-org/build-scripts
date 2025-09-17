@@ -280,3 +280,6 @@
 [submodule "pkgs/libb2.source"]
 	path = pkgs/libb2.source
 	url = https://github.com/BLAKE2/libb2.git
+[submodule "pkgs/zstd.source"]
+	path = pkgs/zstd.source
+	url = https://github.com/facebook/zstd.git
