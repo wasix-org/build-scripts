@@ -24,7 +24,9 @@ charset-normalizer==3.4.3
     #   wasmer-build-scripts (pyproject.toml)
     #   requests
 colorama==0.4.6 ; sys_platform == 'win32'
-    # via qrcode
+    # via
+    #   pytest
+    #   qrcode
 cryptography==45.0.4
     # via
     #   wasmer-build-scripts (pyproject.toml)
@@ -35,6 +37,8 @@ idna==3.10
     # via
     #   wasmer-build-scripts (pyproject.toml)
     #   requests
+iniconfig==2.1.0
+    # via pytest
 jiter==0.10.0
     # via wasmer-build-scripts (pyproject.toml)
 lxml==6.0.0
@@ -52,16 +56,22 @@ numpy==2.3.2
     #   shapely
 orjson==3.11.0
     # via wasmer-build-scripts (pyproject.toml)
+packaging==25.0
+    # via pytest
 pandas==2.3.2
     # via wasmer-build-scripts (pyproject.toml)
 pillow==11.3.0
     # via wasmer-build-scripts (pyproject.toml)
+pluggy==1.6.0
+    # via pytest
 protobuf==6.31.1
     # via wasmer-build-scripts (pyproject.toml)
 psycopg==3.2.9
     # via wasmer-build-scripts (pyproject.toml)
 psycopg-binary==3.2.9 ; implementation_name != 'pypy'
     # via psycopg
+psycopg-pool==3.2.6
+    # via wasmer-build-scripts (pyproject.toml)
 pycparser==2.22
     # via
     #   wasmer-build-scripts (pyproject.toml)
@@ -74,6 +84,8 @@ pydantic==2.11.7
     # via wasmer-build-scripts (pyproject.toml)
 pydantic-core==2.33.2
     # via pydantic
+pygments==2.19.2
+    # via pytest
 pynacl==1.5.0
     # via wasmer-build-scripts (pyproject.toml)
 pyopenssl==25.1.0
@@ -81,6 +93,8 @@ pyopenssl==25.1.0
 pypandoc==1.15
     # via wasmer-build-scripts (pyproject.toml)
 pypng==0.20250521.0
+    # via wasmer-build-scripts (pyproject.toml)
+pytest==8.4.2
     # via wasmer-build-scripts (pyproject.toml)
 python-dateutil==2.9.0
     # via
@@ -119,6 +133,7 @@ tiktoken==0.9.0
 typing-extensions==4.14.1
     # via
     #   wasmer-build-scripts (pyproject.toml)
+    #   psycopg-pool
     #   pydantic
     #   pydantic-core
     #   typing-inspection
