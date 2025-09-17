@@ -16,7 +16,7 @@ if len(sys.argv) > 1:
 else:
     test_dir = os.getenv("TEST_DIR", "./tests/")
     g = f"{test_dir}*.py"
-    print(f"CHecking glob: {g}")
+    print(f"Checking glob: {g}")
     # Find all Python test files in ./tests directory
     TEST_FILES = [f for f in glob.glob(g) if ".skip" not in f and ".broken" not in f]
 
