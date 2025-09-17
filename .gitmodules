@@ -277,3 +277,6 @@
 [submodule "pkgs/cpython.source"]
 	path = pkgs/cpython.source
 	url = https://github.com/wasix-org/cpython.git
+[submodule "pkgs/libb2.source"]
+	path = pkgs/libb2.source
+	url = https://github.com/BLAKE2/libb2.git
