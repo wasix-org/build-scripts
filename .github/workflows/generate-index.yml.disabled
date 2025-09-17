@@ -75,51 +75,17 @@ jobs:
   #     - name: Deploy to GitHub Pages
   #       id: deploy
   #       uses: actions/deploy-pages@v4
+
   test:
-    # needs: deploy
-    runs-on: ubuntu-24
     strategy:
       matrix:
         python-version: ["3.13"]
         wasmer-version: ["v6.1.0-rc.3"]
-    steps:
-      - uses: actions/checkout@v5
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Setup environment
-        run: |
-          python -m venv env
-          source venv/bin/activate
-          pip install .
-          pip install pytest
-      # Validate that the python tests themselves are valid
-      - name: Run tests
-        run: pytest
-
-      # Secondly, validate that the tests pass within wasmer as well
-      - name: Install uv
-        run: curl -LsSf https://astral.sh/uv/install.sh | sh
-      - name: Install wasmer
-        run: curl https://get.wasmer.io -sSfL | sh -s ${{ matrix.wasmer-version }}
-      - name: Setup project for wasmer
-        run: |
-          uv pip compile pyproject.toml \
-            --python-version=${{ matrix.python-version }} \
-            --universal \
-            --extra-index-url https://pythonindex.wasix.org/simple \
-            --index-url=https://pypi.org/simple \
-            --emit-index-url \
-            --only-binary :all: \
-            -o wasmer-requirements.txt
-
-          uvx pip install -r wasmer-requirements.txt \
-            --python-version=${{ matrix.python-version }} \
-            --target wasix-site-packages \
-            --platform wasix_wasm32 \
-            --only-binary=:all: \
-            --compile
-      # Ensure tests pass on wasmer
-      - name: Run tests (wasmer)
-        run: wasmer run .
+    uses: ./.github/workflows/test.yml
+    with:
+      python-version: ${{ matrix.python-version }}
+      wasmer-version: ${{ matrix.wasmer-version }}
+      # Test primary python index only for now. This
+      # setup allows for hosting a separate "testing" python
+      # index down the line (or simply a local one)
+      python-index: https://pythonindex.wasix.org

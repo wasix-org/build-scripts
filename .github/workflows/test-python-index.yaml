@@ -1,0 +1,63 @@
+name: Test Workflow
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+      wasmer-version:
+        required: true
+        type: string
+      python-index:
+        required: true
+        type: string
+      ubuntu-runner:
+        required: false
+        type: string
+        default: "ubuntu-24.04"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Python ${{ inputs.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Setup environment
+        run: |
+          python -m venv env
+          source venv/bin/activate
+          pip install .
+          pip install pytest
+      # Validate that the python tests themselves are valid
+      - name: Run tests
+        run: pytest
+
+      # Secondly, validate that the tests pass within wasmer as well
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Install wasmer
+        run: curl https://get.wasmer.io -sSfL | sh -s ${{ inputs.wasmer-version }}
+      - name: Setup project for wasmer
+        run: |
+          uv pip compile pyproject.toml \
+            --python-version=${{ inputs.python-version }} \
+            --universal \
+            --extra-index-url ${{ inputs.python-index }}/simple \
+            --index-url=https://pypi.org/simple \
+            --emit-index-url \
+            --only-binary :all: \
+            -o wasmer-requirements.txt
+
+          uvx pip install -r wasmer-requirements.txt \
+            --python-version=${{ inputs.python-version }} \
+            --target wasix-site-packages \
+            --platform wasix_wasm32 \
+            --only-binary=:all: \
+            --compile
+      # Ensure tests pass on wasmer
+      - name: Run tests (wasmer)
+        run: wasmer run .
