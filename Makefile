@@ -1158,7 +1158,15 @@ $(call lib,cpython): $(call sysroot,cpython)
 	mkdir -p build
 	cd $(call build,$@) && WASIX_SYSROOT=${PWD}/$(call sysroot,cpython) CC=/usr/bin/clang CXX=/usr/bin/clang++ bash wasix-full.sh
 	$(reset_install_dir) $@
-	cd $(call build,$@) && make -C builddir/wasix install DESTDIR="${PWD}/$@"
+
+$(call lib,libb2):
+	cd $(call build,$@) && bash autogen.sh
+	cd $(call build,$@) && sed -i 's/^  archive_cmds=$$/  archive_cmds='\''$$CC -shared $$pic_flag $$libobjs $$deplibs $$compiler_flags $$wl-soname $$wl$$soname -o $$lib'\''/' configure
+	# set ax_cv_gcc_x86_cpuid_0x00000001=0:0:0:0 to fool autotools that we are a valid x86 cpu. Otherwise we don't get shared libs
+	cd $(call build,$@) && ax_cv_gcc_x86_cpuid_0x00000001=0:0:0:0 ./configure --enable-pic=yes --prefix=/usr/local --libdir='$${exec_prefix}/lib/wasm32-wasi' 
+	cd $(call build,$@) && make
+	$(reset_install_dir) $@
+	cd $(call build,$@) && make install DESTDIR=${PWD}/$@
 	touch $@
 
 #####     Installing wheels and libs     #####
