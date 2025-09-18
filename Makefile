@@ -1,10 +1,3 @@
-ifndef WASIX_SYSROOT
-$(error You need to define WASIX_SYSROOT)
-endif
-ifeq ("$(wildcard $(WASIX_SYSROOT)/include)","")
-$(error Your WASIX_SYSROOT at $(WASIX_SYSROOT) does not contain an include directory)
-endif
-
 SHELL:=/usr/bin/bash
 
 PWD:=$(shell pwd)
@@ -312,7 +305,7 @@ endef
 define build_wheel =
 mkdir -p pkgs
 if test -n "${PREPARE}" ; then source ./cross-venv/bin/activate && cd $(call sdist,$@) && _= ${PREPARE} ; fi
-source ./cross-venv/bin/activate && cd $(call sdist,$@) && WASIX_SYSROOT=${PWD}/$(call sysroot,cpython) ${BUILD_ENV_VARS} python3 -m build --wheel ${BUILD_EXTRA_FLAGS}
+source ./cross-venv/bin/activate && cd $(call sdist,$@) && $(call set_sysroot,cpython) ${BUILD_ENV_VARS} python3 -m build --wheel ${BUILD_EXTRA_FLAGS}
 mkdir -p artifacts
 cp $(call sdist,$@)/dist/*[2y].whl artifacts
 # [2y] is a hack to match anything ending in wasm32 or any
@@ -322,7 +315,7 @@ endef
 define build_sdist =
 mkdir -p pkgs
 if test -n "${PREPARE}" ; then source ./cross-venv/bin/activate && cd $(call build,$@) && _= ${PREPARE} ; fi
-source ./cross-venv/bin/activate && cd $(call build,$@)/${PYPROJECT_PATH} && WASIX_SYSROOT=${PWD}/$(call sysroot,cpython) ${BUILD_ENV_VARS} python3 -m build --sdist ${BUILD_EXTRA_FLAGS}
+source ./cross-venv/bin/activate && cd $(call build,$@)/${PYPROJECT_PATH} && $(call set_sysroot,cpython) ${BUILD_ENV_VARS} python3 -m build --sdist ${BUILD_EXTRA_FLAGS}
 mkdir -p artifacts
 cp $(call build,$@)/${PYPROJECT_PATH}/dist/*[0-9].tar.gz artifacts
 ln -sf ../artifacts/$$(basename $(call build,$@)/${PYPROJECT_PATH}/dist/*[0-9].tar.gz) $@
@@ -333,6 +326,50 @@ define package_lib =
 mkdir -p artifacts
 cd $< && tar cfJ ${PWD}/artifacts/$(notdir $@) *
 ln -sf $(shell realpath -s --relative-to="${PWD}/$(dir $@)" "${PWD}/artifacts/$(notdir $@)") $@
+endef
+
+define assemble_sysroot = 
+$(reset_install_dir) $@
+$(foreach dep,$^,if test "$(dep)" != "$(call tarxz,$(dep))" && test "$(dep)" != "$(call sysroot,$(dep))" ; then echo "The dependencies of a sysroot must be .tar.xz artifacts or other sysroots (got $(dep))." 1>&2 ; exit 1 ; fi ;)
+$(foreach dep,$(filter %.sysroot,$^),cp -rfT ${PWD}/$(call sysroot,$(dep)) ${PWD}/$@ || exit 1;)
+$(foreach dep,$(filter %.tar.xz,$^),make install-$(call project_name,$(dep)) LIBS_DESTDIR=${PWD}/$@ || exit 1;)
+touch $@
+endef
+
+# Ensure that we are in a sysroot
+define ensure_sysroot =
+if ! test -d $@/usr/local/lib/wasm32-wasi ; then echo "Cannot remove shared libs from $@/usr/local/lib/wasm32-wasi, directory does not exist." 1>&2 ; exit 1 ; fi
+endef
+# Check if any of the supplied patterns match the first argument
+define bash_pattern_match =
+[[ $(foreach pattern,$(2) $(3) $(4) $(5) $(6) $(7) $(8) $(9),"$(1)" == ${pattern} || ) 1 == 2 ]]
+endef
+# Remove all shared libs from a sysroot
+define remove_shared_libs =
+$(call ensure_sysroot)
+for file in $@/usr/local/lib/wasm32-wasi/*.so* ; do if test -f $$file ; then rm -f $$file ; fi ; done
+endef
+# Remove all shared libs from a sysroot except the ones matching one of the supplied patterns
+define remove_shared_libs_except =
+$(call ensure_sysroot)
+for file in $@/usr/local/lib/wasm32-wasi/*.so* ; do if ! $(call bash_pattern_match,$$(basename "$$file"),$(1),$(2),$(3),$(4),$(5),$(6),$(7),$(8)) ; then rm -f $$file ; fi ; done
+endef
+# Remove all files from a sysroot that are not libs or headers
+define clean_sysroot =
+$(call ensure_sysroot)
+cd $@ ; rm -rf ./share ./usr/share ./usr/local/share
+cd $@ ; rm -rf ./bin ./usr/bin ./usr/local/bin
+cd $@ ; rm -rf ./sbin ./usr/sbin ./usr/local/sbin
+cd $@ ; rm -rf ./etc ./usr/etc ./usr/local/etc
+endef
+
+# Set some environment variables based on the build sysroot
+define set_sysroot =
+WASIX_SYSROOT=${PWD}/$(if $(1),$(call sysroot,$(1)),$(call sysroot,default)) \
+PKG_CONFIG_SYSROOT_DIR=${PWD}/$(if $(1),$(call sysroot,$(1)),$(call sysroot,default)) \
+PKG_CONFIG_LIBDIR=${PWD}/$(if $(1),$(call sysroot,$(1)),$(call sysroot,default))/usr/local/lib/wasm32-wasi/pkgconfig \
+CMAKE_PREFIX_PATH=${PWD}/$(if $(1),$(call sysroot,$(1)),$(call sysroot,default))/usr/local/lib/wasm32-wasi/cmake \
+
 endef
 
 # Command to run something in an environment with a haskell compiler targeting wasi
@@ -486,10 +523,12 @@ $(call prepared,matplotlib):
 # A target to build a wheel from a python submodule
 # To override the build behaviour, add a target for your submodule
 $(BUILT_WHEELS): $(call whl,%): $(call sdist,%) | cross-venv
-$(call whl,%): $(call sdist,%)
+$(call whl,%): WASIX_SYSROOT = ${PWD}/$(call sysroot,default)
+$(call whl,%): $(call sdist,%) $(call sysroot,default)
 	$(build_wheel)
 $(BUILT_SDISTS): $(call targz,%): $(call build,%) | cross-venv
-$(call targz,%): $(call build,%)
+$(call targz,%): WASIX_SYSROOT = ${PWD}/$(call sysroot,default)
+$(call targz,%): $(call build,%) $(call sysroot,default)
 	$(build_sdist)
 $(UNPACKED_SDISTS): $(call sdist,%): $(call targz,%) | cross-venv
 $(call sdist,%): $(call targz,%)
@@ -684,10 +723,15 @@ $(call tarxz,%): $(call lib,%)
 	$(package_lib)
 	touch $@
 $(call sysroot,%):
-	$(reset_install_dir) $@
-	$(foreach dep,$^,if test "$(dep)" != "$(call tarxz,$(dep))" ; then echo "The dependencies of a sysroot must be .tar.xz artifacts (got $(dep))." 1>&2 ; exit 1 ; fi ;)
-	$(foreach dep,$^,make install-$(call project_name,$(dep)) LIBS_DESTDIR=${PWD}/$@ || exit 1;)
-	touch $@
+	$(assemble_sysroot)
+
+# The default sysroot thats used if nothing else is specified
+DEFAULT_SYSROOT_LIBS=wasix-libc compiler-rt libcxx zlib libffi
+$(filter-out $(call lib,$(DEFAULT_SYSROOT_LIBS)),$(UNPACKED_LIBS)): $(call lib,%): $(call build,%) $(call sysroot,default)
+$(call lib,%): WASIX_SYSROOT = ${PWD}/$(call sysroot,default)
+$(call sysroot,default): $(call tarxz,$(DEFAULT_SYSROOT_LIBS))
+	$(assemble_sysroot)
+	$(call remove_shared_libs)
 
 # TODO: Add libjpeg support
 $(call lib,zbar):
@@ -1223,6 +1267,7 @@ clean-build-artifacts:
 	rm -rf $(call lib,*)
 	rm -rf $(call wheel,*)
 	rm -rf $(call sdist,*)
+	rm -rf $(call sysroot,*)
 
 clean-artifacts:
 	rm -rf artifacts
