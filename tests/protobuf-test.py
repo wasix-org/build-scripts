@@ -1,10 +1,6 @@
 # test_protobuf_basic.py
 
-import os
-import sys
 import unittest
-
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from person_pb2 import Person
 
 
@@ -38,9 +34,7 @@ class TestProtobufBasic(unittest.TestCase):
     def test_unknown_field_ignored(self):
         # Protocol Buffers ignore unknown fields during deserialization.
         serialized = self.person.SerializeToString()
-        corrupted = (
-            serialized + b"\x20\x01"
-        )  # Append unknown field (field number 4, varint 1)
+        corrupted = serialized + b"\x20\x01"  # Append unknown field (field number 4, varint 1)
         new_person = Person()
         new_person.ParseFromString(corrupted)
         self.assertEqual(new_person.name, "Alice")
@@ -57,5 +51,5 @@ class TestProtobufBasic(unittest.TestCase):
         self.assertIn("id: 123", repr_str)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

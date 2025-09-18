@@ -84,10 +84,10 @@ Buildscripts to build numpy and other wheels for wasix. For convenience, this pa
 
 The build script is controlled by the following environment variables:
 
-- `CC`, `CXX`, `AR`, `LD`, `RANLIB`, etc... : The cross-compiler tools. These should all be normal clang tools, but target wasm32-wasix by default and use the wasix sysroot.
-- `WASIX_SYSROOT`: The path to the wasix sysroot that is used by the toolchain. Libraries will get installed here when you run `make install` or when they are required to build a package.
-- `INSTALL_DIR`: The path to the python library path. Wheels will get installed here when you run `make install`.
-- `WASMER`: The path to the wasmer binary. You must have it registered to handle wasm files as binfmt_misc. You can do this with `sudo $WASMER binfmt reregister`.
+* `CC`, `CXX`, `AR`, `LD`, `RANLIB`, etc... : The cross-compiler tools. These should all be normal clang tools, but target wasm32-wasix by default and use the wasix sysroot.
+* `WASIX_SYSROOT`: The path to the wasix sysroot that is used by the toolchain. Libraries will get installed here when you run `make install` or when they are required to build a package.
+* `INSTALL_DIR`: The path to the python library path. Wheels will get installed here when you run `make install`.
+* `WASMER`: The path to the wasmer binary. You must have it registered to handle wasm files as binfmt_misc. You can do this with `sudo $WASMER binfmt reregister`.
 
 The easiest way to setup all the environment variables is to activate the wasix-clang environment using `source wasix-clang/activate`.
 
@@ -325,7 +325,7 @@ to check which python libraries depend on shared libs. We try to keep that to a 
 
 ### Structure
 
-<!--
+<!-- 
 There is the pkgs folder that contains most stuff
 
 For each project that can be built there are multiple files depending on the type.
@@ -351,52 +351,52 @@ TODO: Make this more understandable
 
 Inside the pkgs/ folder there can be the following directories:
 
-- `*.source`: clean submodule checkout
-- `*.prepared`: patched worktree of source
-- `*.build`: temporary build directory
-- `*.tar.gz`: python sdist
-- `*.sdist`: unpacked python sdist
-- `*.whl`: compiled python wheel
-- `*.wheel`: unpacked python wheel
-- `*.lib`: unpacked library/application
-- `*.tar.xz`: packed library/application
+* `*.source`: clean submodule checkout
+* `*.prepared`: patched worktree of source
+* `*.build`: temporary build directory
+* `*.tar.gz`: python sdist
+* `*.sdist`: unpacked python sdist
+* `*.whl`: compiled python wheel
+* `*.wheel`: unpacked python wheel
+* `*.lib`: unpacked library/application
+* `*.tar.xz`: packed library/application
 
 #### Base structure
 
 Each project follows a consistent flow through the first three main directories.
 
-- `*.source`
-  - This is a clean checkout of the project's upstream source code, tracked as a git submodule.
-  - We avoid modifying this directly, since changes here would slow down git operations in the build-scripts repo.
-- `*.prepared`
-  - A git worktree created from the `*.source` repository.
-  - If patches are needed, they're applied here.
-  - If no patches are needed, it's just a clean mirror of the source.
-  - This directory is persistent and only refreshed if the source changes so new patches can be developed in this directory
-- `*.build`
-  - A copy of the `*.prepared` directory, used for the actual build step.
-  - Contains all intermediate build artifacts.
-  - This directory is temporary and may be deleted between builds. Never make manual changes here.
+* `*.source`
+  * This is a clean checkout of the project's upstream source code, tracked as a git submodule.
+  * We avoid modifying this directly, since changes here would slow down git operations in the build-scripts repo.
+* `*.prepared`
+  * A git worktree created from the `*.source` repository.
+  * If patches are needed, they're applied here.
+  * If no patches are needed, it's just a clean mirror of the source.
+  * This directory is persistent and only refreshed if the source changes so new patches can be developed in this directory
+* `*.build`
+  * A copy of the `*.prepared` directory, used for the actual build step.
+  * Contains all intermediate build artifacts.
+  * This directory is temporary and may be deleted between builds. Never make manual changes here.
 
 The remaining steps are different depending on the type of project.
 
 #### Python modules
 
-- The build step creates a `*.tar.gz` sdist from the `*.build` directory.
-- The sdist is then extracted into a `*.sdist` folder.
-- Finally, a wheel (`*.whl`) is built from the `*.sdist`.
-- If you want to you can make a `*.wheel` directory to view the unpacked wheel
+* The build step creates a `*.tar.gz` sdist from the `*.build` directory.
+* The sdist is then extracted into a `*.sdist` folder.
+* Finally, a wheel (`*.whl`) is built from the `*.sdist`.
+* If you want to you can make a `*.wheel` directory to view the unpacked wheel
 
 #### WASIX libraries and applications
 
-- The build step builds the library and installs it into a `*.lib` folder, following the correct directory structure.
-- That folder is then compressed into a final distributable \*.tar.xz.
+* The build step builds the library and installs it into a `*.lib` folder, following the correct directory structure.
+* That folder is then compressed into a final distributable *.tar.xz.
 
 #### Interdependencies
 
 If a project depends on other project they can either be direct dependencies of that project or you can define a `*.sysroot` target with the dependencies as prerequisites.
 
-- `*.sysroot`
-  - Contains the merged builds of multiple other projects
-  - Useful when a project is using pkg-config to find its dependencies
-  - Automatically builds a sysroot from its list of prerequisites
+* `*.sysroot`
+  * Contains the merged builds of multiple other projects
+  * Useful when a project is using pkg-config to find its dependencies
+  * Automatically builds a sysroot from its list of prerequisites
