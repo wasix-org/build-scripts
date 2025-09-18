@@ -26,7 +26,7 @@ for testfile in tests/*.py; do
     fi
 
     EXPECT_BROKEN=false
-    if [[ "$TEST_NAME" == *-broken.py ]]; then
+    if [[ "$TEST_NAME" == *\.broken.py ]]; then
         EXPECT_BROKEN=true
     fi
     
