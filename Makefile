@@ -632,13 +632,13 @@ $(call whl,uvloop): BUILD_EXTRA_FLAGS = '-C--build-option=build_ext --use-system
 
 $(call sysroot,mysqlclient): $(call sysroot,cpython) $(call tarxz,mariadb-connector-c)
 	$(assemble_sysroot)
+	# Link files to make forced static linking work
+	ln -s libmariadbclient.a $@/usr/local/lib/wasm32-wasi/libmariadb.a
+	ln -s libmysqlclient.a $@/usr/local/lib/wasm32-wasi/libmysql.a
 $(call targz,mysqlclient): $(call sysroot,mysqlclient)
-$(call targz,mysqlclient): BUILD_ENV_VARS = $(call set_sysroot,mysqlclient)
+$(call targz,mysqlclient): BUILD_ENV_VARS = $(call set_sysroot,mysqlclient) WASIX_FORCE_STATIC_DEPENDENCIES=true
 $(call whl,mysqlclient): $(call sysroot,mysqlclient)
-# TODO: We previously build this with a static mariadb-connector-c, but that currently does not work
-# WASIX_FORCE_STATIC_DEPENDENCIES=true is currently not working because libmysql.a does not exist in mariadb-connector-c (only libmysql.so and libmysqlclient.a)
-# It could be that we previously manually moved libmysqlclient.a to libmysql.a in the sysroot (although I am not sure if these are the same)
-$(call whl,mysqlclient): BUILD_ENV_VARS = $(call set_sysroot,mysqlclient)
+$(call whl,mysqlclient): BUILD_ENV_VARS = $(call set_sysroot,mysqlclient) WASIX_FORCE_STATIC_DEPENDENCIES=true
 
 # Use numpy dev build from our registry. Our patches have been merged upstream, so for the next numpy release we can remove this.
 $(call targz,pandas): BUILD_ENV_VARS += PIP_CONSTRAINT=$$(F=$$(mktemp) ; echo numpy==2.4.0.dev0 > $$F ; echo $$F)
