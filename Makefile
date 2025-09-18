@@ -411,7 +411,7 @@ python: pkgs/cpython.webc
 	wasmer package unpack $< --out-dir $@
 	cp $@/modules/python $@/pkgs/cpython.lib/usr/local/bin/python3.wasm
 	touch $@
-python-with-libs: python | $(call lib,postgresql) $(call lib,zbar) $(call lib,libjpeg-turbo) $(call lib,geos)
+python-with-libs: python $(call lib,postgresql) $(call lib,zbar) $(call lib,libjpeg-turbo) $(call lib,geos)
 	### Prepare a python release with all the deps
 	# Copy the base python package
 	rm -rf python-with-libs
@@ -433,7 +433,7 @@ python-with-libs: python | $(call lib,postgresql) $(call lib,zbar) $(call lib,li
 	echo 'Build python-with-libs'
 	echo 'To test it run: `bash run-tests.sh`'
 	echo 'To publish it run: `wasmer package publish --registry wasmer.io python-with-libs`' 
-python-with-packages: python-with-libs | $(BUILT_WHEELS_TO_INSTALL) $(PWB_WHEELS_TO_INSTALL)
+python-with-packages: python-with-libs $(BUILT_WHEELS_TO_INSTALL) $(PWB_WHEELS_TO_INSTALL)
 	### Prepare a python release with all the deps
 	# Copy the base python package
 	rm -rf python-with-packages
