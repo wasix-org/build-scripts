@@ -140,111 +140,111 @@ Here is a list of the versions of the wheels and libraries that are included in 
 
 #### Wheels
 
-- numpy: numpy/numpy main
-- markupsafe: 3.0.2
-- pandas: 2.3.2
-- pytz: 2025.2
-- dateutil: 2.9.0
-- tzdata: 2025.2
-- six: 1.17.0
-- msgpack: 1.1.0
-- pycryptodome: 3.23.0
-- pycryptodomex: 3.23.0
-- pyzbar: 0.1.9
-- cpython: 3.1.2
-- pypandoc: 1.15
-- pypandoc_binary: 1.15
-- psycopg: 3.2.9
-- psycopg-binary: 3.2.9
-- psycopg-pool: pool-3.2.6
-- brotlicffi: 1.1.0.0
-- cffi: 1.17.1
-- pillow: 11.3.0
-- matplotlib: 3.10.6
-- uvloop: 0.21.0
-- mysqlclient: 2.2.7
-- python-qrcode: 8.2
-- pycparser: 2.22
-- pydantic: 2.11.7
-- typing_extensions: 4.14.1
-- typing-inspection: 0.4.1
-- annotated-types: 0.7.0
-- shapely: 2.1.1
-- mrab-regex: 2025.7.31
-- lxml: 6.0.0
-- protobuf: 31.1
-- grpc: 1.74.1
-- numpy: 1.26.5
-- numpy: 2.0.2
-- numpy: 2.3.2
-- python-crc32c: 1.7.1
-- requests: 2.32.4
-- urllib3: 2.5.0
-- idna: 3.10
-- certifi: 2025.08.03
-- charset-normalizer: 3.4.3
-- pypng: 0.20250521.0
-- pyarrow: 19.0.1
-- pyarrow: 21.0.0
-- packaging: 25.0
-- pyparsing: 3.2.3
-- cycler: 0.12.1
-- kiwisolver: 1.4.9
-- contourpy: 1.3.3
-- pyopenssl: 25.1.0
-- aspw: 3.50.4.0
+* numpy: numpy/numpy main
+* markupsafe: 3.0.2
+* pandas: 2.3.2
+* pytz: 2025.2
+* dateutil: 2.9.0
+* tzdata: 2025.2
+* six: 1.17.0
+* msgpack: 1.1.0
+* pycryptodome: 3.23.0
+* pycryptodomex: 3.23.0
+* pyzbar: 0.1.9
+* cpython: 3.1.2
+* pypandoc: 1.15
+* pypandoc_binary: 1.15
+* psycopg: 3.2.9
+* psycopg-binary: 3.2.9
+* psycopg-pool: pool-3.2.6
+* brotlicffi: 1.1.0.0
+* cffi: 1.17.1
+* pillow: 11.3.0
+* matplotlib: 3.10.6
+* uvloop: 0.21.0
+* mysqlclient: 2.2.7
+* python-qrcode: 8.2
+* pycparser: 2.22
+* pydantic: 2.11.7
+* typing_extensions: 4.14.1
+* typing-inspection: 0.4.1
+* annotated-types: 0.7.0
+* shapely: 2.1.1
+* mrab-regex: 2025.7.31
+* lxml: 6.0.0
+* protobuf: 31.1
+* grpc: 1.74.1
+* numpy: 1.26.5
+* numpy: 2.0.2
+* numpy: 2.3.2
+* python-crc32c: 1.7.1
+* requests: 2.32.4
+* urllib3: 2.5.0
+* idna: 3.10
+* certifi: 2025.08.03
+* charset-normalizer: 3.4.3
+* pypng: 0.20250521.0
+* pyarrow: 19.0.1
+* pyarrow: 21.0.0
+* packaging: 25.0
+* pyparsing: 3.2.3
+* cycler: 0.12.1
+* kiwisolver: 1.4.9
+* contourpy: 1.3.3
+* pyopenssl: 25.1.0
+* aspw: 3.50.4.0
 <!-- WHEEL_VERSIONS_END -->
 
 psycopg3-c is just the sdist of psycopg3-binary
 
 #### Libraries
 
-- libzbar: 0.23.93
-- libffi: wasix-org/libffi main
-- pandoc: haskell-wasm/pandoc wasm
-- postgresql: 17.5
-- brotli: 1.1.0
-- zlib: develop
-  - 1.3.1 does not have proper cmake support, so we are using develop for now
-- libjpeg-turbo: 3.1.1
-- xz: 5.8.1
-- libtiff: 4.7.0
-- libwebp: 1.5.0
-- giflib: 5.2.2
-- libpng: 1.6.50
-- SDL: 3.2.16
-  - SDL has all subsystems disabled
-- openjpeg: 2.5.3
-- libuv: 1.51.0
-- mariadb-connector-c: 3.4.6
-- openssl: 3.5.1
-- bzip2: 1.0.8
-- util-linux: 2.41.1
-  - We only build libuuid from util-linux
-- openssh: 10.0p2
-- dropbear: 2025.88
-- tinyxml2: 11.0.0
-- geos: 3.13.1
-- libxslt: 1.1.43
-- libxml2: 2.14.5
-- google-crc32c: 1.1.2
-- arrow: 19.0.1
-- arrow: 21.0.0
-- rapidjson: 1.1.0
-- icu: 77.1
-- readline: 8.2
-- ncurses: 6.4.20230225
-- curl: curl/curl ab18c04218ff316cd67b1e928c5cee579b2f66a0
-  - This was the current commit in the wasix fork. We can probably update to the next release
-- pycurl: 7.45.6
-- sqlite: 3.50.4
-- wasix-libc: wasix-org/wasix-libc e4e5cfcf1009e690207821e9b3a63cdce2ee9e86
-  - The commit before we removed fork. A few packages don't build if fork is not defined.
-- libcxx: wasix-org/llvm-project 6bb93a243f6d15855f485f5aec3810d9e2de150d
-  - This is the commit that is currently used by wasix-libc
-- compiler-rt: wasix-org/llvm-project 6bb93a243f6d15855f485f5aec3810d9e2de150d
-  - This is the commit that is currently used by wasix-libc
-  <!-- LIB_VERSIONS_END -->
+* libzbar: 0.23.93
+* libffi: wasix-org/libffi main
+* pandoc: haskell-wasm/pandoc wasm
+* postgresql: 17.5
+* brotli: 1.1.0
+* zlib: develop
+  * 1.3.1 does not have proper cmake support, so we are using develop for now
+* libjpeg-turbo: 3.1.1
+* xz: 5.8.1
+* libtiff: 4.7.0
+* libwebp: 1.5.0
+* giflib: 5.2.2
+* libpng: 1.6.50
+* SDL: 3.2.16
+  * SDL has all subsystems disabled
+* openjpeg: 2.5.3
+* libuv: 1.51.0
+* mariadb-connector-c: 3.4.6
+* openssl: 3.5.1
+* bzip2: 1.0.8
+* util-linux: 2.41.1
+  * We only build libuuid from util-linux
+* openssh: 10.0p2
+* dropbear: 2025.88
+* tinyxml2: 11.0.0
+* geos: 3.13.1
+* libxslt: 1.1.43
+* libxml2: 2.14.5
+* google-crc32c: 1.1.2
+* arrow: 19.0.1
+* arrow: 21.0.0
+* rapidjson: 1.1.0
+* icu: 77.1
+* readline: 8.2
+* ncurses: 6.4.20230225
+* curl: curl/curl ab18c04218ff316cd67b1e928c5cee579b2f66a0
+  * This was the current commit in the wasix fork. We can probably update to the next release
+* pycurl: 7.45.6
+* sqlite: 3.50.4
+* wasix-libc: wasix-org/wasix-libc e4e5cfcf1009e690207821e9b3a63cdce2ee9e86
+  * The commit before we removed fork. A few packages don't build if fork is not defined.
+* libcxx: wasix-org/llvm-project 6bb93a243f6d15855f485f5aec3810d9e2de150d
+  * This is the commit that is currently used by wasix-libc
+* compiler-rt: wasix-org/llvm-project 6bb93a243f6d15855f485f5aec3810d9e2de150d
+  * This is the commit that is currently used by wasix-libc
+<!-- LIB_VERSIONS_END -->
 
 ## Tests
 
