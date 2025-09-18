@@ -1,0 +1,5 @@
+name: build-scripts
+app_id: da_nm3IetwU74x2
+owner: wasmer
+package: '.'
+kind: wasmer.io/App.v0

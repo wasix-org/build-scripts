@@ -5,6 +5,18 @@ import os
 import runpy
 import sys
 
+class Tee(io.StringIO):
+    def __init__(self, *streams):
+        super().__init__()
+        self.streams = streams
+
+    def write(self, data):
+        for s in self.streams:
+            s.write(data)
+            s.flush()
+        super().write(data)
+
+
 # Check if a specific test is provided
 if len(sys.argv) > 1:
     TEST_FILE = sys.argv[1]
@@ -31,7 +43,7 @@ NC = "\033[0m"  # No Color
 def run_test(test_file):
     print("{}Running test: {}{}".format(YELLOW, test_file, NC))
 
-    buf = io.StringIO()
+    buf = Tee(sys.stdout)
     try:
         with contextlib.redirect_stdout(buf):
             runpy.run_path(test_file, run_name="__main__")
