@@ -1,7 +1,7 @@
 [package]
 name = "wasmer/build-scripts"
 version = "0.1.10"
-entrypoint = "start"
+entrypoint = "server"
 
 [dependencies]
 "wasmer/python-native" = "=0.1.11"
@@ -12,12 +12,26 @@ entrypoint = "start"
 "/opt/venv/packages" = "./wasix-site-packages"
 
 [[command]]
-name = "start"
+name = "server"
 module = "wasmer/python-native:python"
 runner = "wasi"
 
 [command.annotations.wasi]
 main-args = ["/app/main.py"]
+env = [
+  "PYTHONEXECUTABLE=/bin/python",
+  "PYTHONHOME=/cpython",
+  "PYTHONPATH=/opt/venv/packages",
+  "HOME=/app",
+]
+
+[[command]]
+name = "test"
+module = "wasmer/python-native:python"
+runner = "wasi"
+
+[command.annotations.wasi]
+main-args = ["/app/run-tests.py"]
 env = [
   "PYTHONEXECUTABLE=/bin/python",
   "PYTHONHOME=/cpython",

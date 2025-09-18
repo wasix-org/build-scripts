@@ -42,6 +42,7 @@ jobs:
         run: curl https://get.wasmer.io -sSfL | sh -s ${{ inputs.wasmer-version }}
       - name: Setup project for wasmer
         run: |
+          cd testing
           uv pip compile pyproject.toml \
             --python-version=${{ inputs.python-version }} \
             --universal \
@@ -59,4 +60,4 @@ jobs:
             --compile
       # Ensure tests pass on wasmer
       - name: Run tests (wasmer)
-        run: wasmer run .
+        run: wasmer run . --registry=wasmer.wtf --command-name=test --net
