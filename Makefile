@@ -1209,12 +1209,14 @@ $(INSTALL_PYTHON_WASIX_BINARIES_WHEELS_TARGETS): install-pwb-%: ${WHEELS_DESTDIR
 
 init: $(addsuffix /.git,$(SUBMODULES))
 
-clean: init
+clean: init clean-build-artifacts
+	# Remove patched source repos
+	rm -rf $(call prepared,*)
+
+clean-build-artifacts:
 	rm -rf python python.webc
 	rm -rf cross-venv native-venv
 	rm -rf python-with-packages
-	# Remove patched source repos
-	rm -rf $(call prepared,*)
 	# Remove active build directories
 	rm -rf $(call build,*)
 	# Remove unpacked packages
@@ -1230,4 +1232,4 @@ clean-artifacts:
 	rm -rf $(call whl,*)
 
 .SECONDARY: $(BUILT_SDISTS) $(BUILT_LIBS) $(BUILT_WHEELS) $(SUBMODULES) $(UNPACKED_LIBS)
-.PHONY: all wheels libs external-wheels test install install-wheels install-libs clean init $(INSTALL_WHEELS_TARGETS) $(INSTALL_LIBS_TARGETS)
+.PHONY: all wheels libs external-wheels test install install-wheels install-libs clean clean-build-artifacts init $(INSTALL_WHEELS_TARGETS) $(INSTALL_LIBS_TARGETS)
