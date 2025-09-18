@@ -255,7 +255,7 @@ So there are two ways of running the tests, natively and with wasmer:
 
 Requirements:
 
-- Python 3.10+
+- Python 3.13
 - `python -m venv env`
 - `source venv/bin/activate`
 - `pip install .`
