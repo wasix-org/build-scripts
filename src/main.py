@@ -29,7 +29,7 @@ app = FastAPI(
 @app.get("/")
 async def root():
     return {
-        "message": "Build Scripts - Tests",
+        "message": "Build Scripts - Tests. Be aware that calling /check will take anywhere from 3-5 minutes to deliver a response. Look in the dashboard logs for progress.",
         "version": "0.1.0",
         "endpoints": [
             "/",
