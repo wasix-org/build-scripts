@@ -5,6 +5,7 @@ import os
 import runpy
 import sys
 
+
 class Tee(io.StringIO):
     def __init__(self, *streams):
         super().__init__()
@@ -25,6 +26,9 @@ if len(sys.argv) > 1:
         print("Error: Test file '{}' not found.".format(TEST_FILE))
         sys.exit(1)
     TEST_FILES = [TEST_FILE]
+    # Remove any subsequent arguments since these breaks pytest
+    # for some ungodly reason (this one took a while to figure out)
+    sys.argv = [sys.argv[0]]
 else:
     test_dir = os.getenv("TEST_DIR", "./tests/")
     g = f"{test_dir}*.py"
@@ -76,9 +80,10 @@ FAILED_TESTS = 0
 FAILED_LIST = []
 
 # Run each test
-print("Found {} tests".format(len(TEST_FILES)))
+print("Found {} tests, list: {}".format(len(TEST_FILES), TEST_FILES))
 for test in TEST_FILES:
     TOTAL_TESTS += 1
+    print(test)
     if run_test(test):
         PASSED_TESTS += 1
     else:
