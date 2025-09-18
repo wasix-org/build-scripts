@@ -282,7 +282,7 @@ Run tests:
 
 - `uv pip compile pyproject.toml --python-version=3.13 --universal --extra-index-url https://pythonindex.wasix.org/simple --index-url=https://pypi.org/simple --emit-index-url --only-binary :all: -o wasmer-requirements.txt`
 - `uvx pip install -r wasmer-requirements.txt --target wasix-site-packages --platform wasix_wasm32 --only-binary=:all: --python-version=3.13 --compile`
-- `TEST_DIR=/tests/ wasmer run . --registry=wasmer.wtf --net --forward-host-env`
+- `TEST_DIR=../tests/ wasmer run . --registry=wasmer.wtf --net --forward-host-env`
 - `curl localhost:8081/check`
 
 This will run all tests via fastapi.
