@@ -211,6 +211,8 @@ LIBS+=wasix-libc
 LIBS+=libcxx
 LIBS+=compiler-rt
 LIBS+=cpython
+LIBS+=libb2
+LIBS+=zstd
 
 # Packages that are broken can be marked as DONT_BUILD
 # Packages that work but should not be included in the default install can be marked as DONT_INSTALL
