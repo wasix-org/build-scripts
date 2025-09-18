@@ -49,7 +49,6 @@ dependencies = [
   "python-dateutil",
   "psycopg",
   "psycopg_pool",
-  "pytest",
   "pytz",
   "PyYAML",
   "svgwrite",
