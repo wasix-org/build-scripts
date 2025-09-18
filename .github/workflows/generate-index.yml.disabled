@@ -3,7 +3,7 @@ name: Build and Deploy Python Index to GitHub Pages
 on:
   push:
     branches:
-      - main # Re-generate index on every change to the default branch
+      - main  # Re-generate index on every change to the default branch
     paths:
       - artifacts/*.whl
       - generate-index.py
@@ -13,9 +13,9 @@ on:
 # Minimal permissions required by the official Pages deployment action
 # NOTE: these are REPLACED, not merged, with job-level permissions
 permissions:
-  contents: read # to checkout the repository
-  pages: write # to deploy to Pages
-  id-token: write # to verify deployment origin
+  contents: read      # to checkout the repository
+  pages: write        # to deploy to Pages
+  id-token: write     # to verify deployment origin
 
 concurrency:
   group: "deploy-pages"
@@ -63,7 +63,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: github-pages # default Pages environment
+      name: github-pages   # default Pages environment
       url: ${{ steps.deploy.outputs.page_url }}
     # Job-level permissions must explicitly include the same set
     permissions:
