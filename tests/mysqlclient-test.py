@@ -2,15 +2,11 @@
 
 from MySQLdb import _mysql
 
-try:
-    db = _mysql.connect(host="127.0.0.1", port=3306, user="root", password="password")
+db = _mysql.connect(host="127.0.0.1", port=3306, user="root", password="password")
 
-    db.query("SELECT VERSION()")
+db.query("SELECT VERSION()")
 
-    result = db.use_result()
-    row = result.fetch_row()
+result = db.use_result()
+row = result.fetch_row()
 
-    print("MySQL Server Version:", row[0][0])
-except:
-    # It runs code, good enough until we can run a mysqlserver in wasix!
-    pass
+print("MySQL Server Version:", row[0][0])
