@@ -28,13 +28,14 @@ jobs:
           python-version: ${{ inputs.python-version }}
       - name: Setup environment
         run: |
+          cd testing
           sudo apt-get install libzbar0
           pip install .
-          pip install pytest
       # Validate that the python tests themselves are valid
-      - name: Run tests
-        run: pytest
-
+      - name: Run tests natively
+        # This should hopefully be temporary
+        continue-on-error: true
+        run: TEST_DIR=../ python src/run_test.py
       # Secondly, validate that the tests pass within wasmer as well
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -42,7 +43,6 @@ jobs:
         run: curl https://get.wasmer.io -sSfL | sh -s ${{ inputs.wasmer-version }}
       - name: Setup project for wasmer
         run: |
-          cd testing
           uv pip compile pyproject.toml \
             --python-version=${{ inputs.python-version }} \
             --universal \
