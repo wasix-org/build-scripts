@@ -61,4 +61,4 @@ jobs:
             --compile
       # Ensure tests pass on wasmer
       - name: Run tests (wasmer)
-        run: cd testing && wasmer run . --registry=wasmer.wtf --command-name=test --net
+        run: cd testing && /home/runner/.wasmer/bin/wasmer run . --registry=wasmer.wtf --command-name=test --net
