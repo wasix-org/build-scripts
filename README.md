@@ -296,6 +296,7 @@ This is needed when testing on edge, since `.../check` times out the workload.
 In conjunction with this, there is a convenience script which runs all tests each in a separate query.
 
 So you may also run `./run-all-tests-via-api.py --host <hostname> --port <port>`.
+If you need to hit a specific IP while preserving the original hostname (e.g., for edge testing or custom DNS), use `--resolve-ip <ip>` which is SNI-compatible for HTTPS and sets the HTTP `Host` header accordingly.
 This is intended to be run to validate package functionaltiy on edge, as each test becomes a separate workload.
 
 ### Notes
