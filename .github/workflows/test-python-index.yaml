@@ -33,9 +33,9 @@ jobs:
           pip install .
       # Validate that the python tests themselves are valid
       - name: Run tests natively
-        # This should hopefully be temporary
-        continue-on-error: true
-        run: TEST_DIR=../tests/ python src/run_test.py
+        run: |
+          cd testing
+          TEST_DIR=../tests/ python src/run-tests.py
       # Secondly, validate that the tests pass within wasmer as well
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
