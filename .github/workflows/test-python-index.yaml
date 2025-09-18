@@ -35,7 +35,7 @@ jobs:
       - name: Run tests natively
         # This should hopefully be temporary
         continue-on-error: true
-        run: TEST_DIR=../ python src/run_test.py
+        run: TEST_DIR=../tests/ python src/run_test.py
       # Secondly, validate that the tests pass within wasmer as well
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -43,6 +43,7 @@ jobs:
         run: curl https://get.wasmer.io -sSfL | sh -s ${{ inputs.wasmer-version }}
       - name: Setup project for wasmer
         run: |
+          cd testing
           uv pip compile pyproject.toml \
             --python-version=${{ inputs.python-version }} \
             --universal \
@@ -60,4 +61,4 @@ jobs:
             --compile
       # Ensure tests pass on wasmer
       - name: Run tests (wasmer)
-        run: wasmer run . --registry=wasmer.wtf --command-name=test --net
+        run: cd testing && wasmer run . --registry=wasmer.wtf --command-name=test --net
