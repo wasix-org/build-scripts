@@ -64,7 +64,12 @@ def _list_tests() -> list[str]:
 
     tests_dir = _resolve_tests_dir()
     pattern = os.path.join(tests_dir, "*.py")
-    files = [f for f in glob.glob(pattern) if ".skip" not in f and ".broken" not in f]
+    allow_broken = os.getenv("ALLOW_BROKEN")
+    files = [
+        f
+        for f in glob.glob(pattern)
+        if ".skip" not in f and (".broken" not in f or allow_broken)
+    ]
     # Return just filenames for readability
     return [os.path.basename(f) for f in sorted(files)]
 
