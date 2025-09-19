@@ -1,10 +1,10 @@
 [package]
-name = "wasmer/build-scripts"
+name = "lorentz-dev/build-scripts"
 version = "0.1.10"
 entrypoint = "server"
 
 [dependencies]
-"wasmer/python-native" = "=0.1.11"
+"python/python" = "=3.13.1"
 
 [fs]
 "/app" = "./src"
@@ -13,28 +13,18 @@ entrypoint = "server"
 
 [[command]]
 name = "server"
-module = "wasmer/python-native:python"
+module = "python/python:python"
 runner = "wasi"
 
 [command.annotations.wasi]
 main-args = ["/app/main.py"]
-env = [
-  "PYTHONEXECUTABLE=/bin/python",
-  "PYTHONHOME=/cpython",
-  "PYTHONPATH=/opt/venv/packages",
-  "HOME=/app",
-]
+env = ["PYTHONEXECUTABLE=/bin/python", "PYTHONHOME=/cpython", "PYTHONPATH=/opt/venv/packages", "HOME=/app"]
 
 [[command]]
 name = "test"
-module = "wasmer/python-native:python"
+module = "python/python:python"
 runner = "wasi"
 
 [command.annotations.wasi]
 main-args = ["/app/run-tests.py"]
-env = [
-  "PYTHONEXECUTABLE=/bin/python",
-  "PYTHONHOME=/cpython",
-  "PYTHONPATH=/opt/venv/packages",
-  "HOME=/app",
-]
+env = ["PYTHONEXECUTABLE=/bin/python", "PYTHONHOME=/cpython", "PYTHONPATH=/opt/venv/packages", "HOME=/app"]
