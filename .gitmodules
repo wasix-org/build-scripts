@@ -283,3 +283,6 @@
 [submodule "pkgs/zstd.source"]
 	path = pkgs/zstd.source
 	url = https://github.com/facebook/zstd.git
+[submodule "pkgs/zstandard.source"]
+	path = pkgs/zstandard.source
+	url = https://github.com/indygreg/python-zstandard.git

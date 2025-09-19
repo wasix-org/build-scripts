@@ -207,6 +207,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * contourpy: 1.3.3
 * pyopenssl: 25.1.0
 * aspw: 3.50.4.0
+* zstandard: 0.25.0
 <!-- WHEEL_VERSIONS_END -->
 
 psycopg3-c is just the sdist of psycopg3-binary
