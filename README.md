@@ -208,6 +208,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * pyopenssl: 25.1.0
 * aspw: 3.50.4.0
 * zstandard: 0.25.0
+  * Temporary at 103f151ca9639de8f0756c7381633973e347541a to get a small fix. PR is opened
 <!-- WHEEL_VERSIONS_END -->
 
 psycopg3-c is just the sdist of psycopg3-binary
