@@ -71,6 +71,7 @@ WHEELS+=contourpy
 WHEELS+=pycurl
 WHEELS+=pyopenssl
 WHEELS+=aspw
+WHEELS+=zstandard
 # WHEELS_END
 
 #####     List of all wheel in python-wasix-binaries with reasons for inclusion in here     #####
