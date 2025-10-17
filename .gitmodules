@@ -339,3 +339,6 @@
 [submodule "pkgs/ssl-certs.source"]
 	path = pkgs/ca-certificates.source
 	url = https://github.com/wasix-org/python-wasix-binaries
+[submodule "pkgs/sed.source"]
+	path = pkgs/sed.source
+	url = git://git.sv.gnu.org/sed
