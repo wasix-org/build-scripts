@@ -269,7 +269,7 @@ psycopg3-c is just the sdist of psycopg3-binary
   * Unofficial github mirror, because upstream uses mercurial
 * ca-certificates: wasix-org/python-wasix-binaries
   * For now this is just copied in from python-wasix-binaries
-* sed: 4.9
+* sed: master
 <!-- LIB_VERSIONS_END -->
 
 ### Notes

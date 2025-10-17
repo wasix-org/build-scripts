@@ -341,4 +341,5 @@
 	url = https://github.com/wasix-org/python-wasix-binaries
 [submodule "pkgs/sed.source"]
 	path = pkgs/sed.source
-	url = https://git.savannah.gnu.org/git/sed
+	url = https://github.com/mirror/sed.git
+
