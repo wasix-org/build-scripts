@@ -1,5 +1,5 @@
 kind: wasmer.io/App.v0
 name: build-scripts
-owner: lorentz-dev
+owner: lorentz
 package: .
-app_id: da_2OPIqt7UeOLK
+app_id: da_K6AIot5UqdzW

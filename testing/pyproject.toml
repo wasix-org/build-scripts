@@ -17,7 +17,7 @@ dependencies = [
   "charset-normalizer",
   "cryptography",
   "google-crc32c",
-  "fastapi>=0.116.1",
+  "fastapi",
   "idna",
   "jiter",
   "lxml",
@@ -69,11 +69,3 @@ exclude = ["*"]
 python_files = ["*-test.py", "*_test.py", "test_*.py"]
 addopts = ["-q"]
 testpaths = ["tests"]
-
-[[tool.uv.index]]
-# A human-friendly name you pick
-name = "wasix"
-# The Simple index URL
-url = "https://wasix-org.github.io/build-scripts/simple"
-# Optional – make this the primary index
-default = true

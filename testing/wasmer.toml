@@ -1,5 +1,5 @@
 [package]
-name = "lorentz-dev/build-scripts"
+name = "lorentz/build-scripts"
 version = "0.1.10"
 entrypoint = "server"
 
