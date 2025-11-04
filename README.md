@@ -193,6 +193,17 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * contourpy: 1.3.3
 * pyopenssl: 25.1.0
 * aspw: 3.50.4.0
+* zstandard: 0.25.0
+  * Temporary at 103f151ca9639de8f0756c7381633973e347541a to get a small fix. PR is opened
+* caio: 0.9.17
+* jqpy: 1.10.0
+* python-xxhash: 3.5.0
+* peewee: 3.18.2
+* clickhouse-connect: 0.9.2
+* pandas2.2.3: 2.2.3
+* python-lz4: 4.4.4
+* fastavro: 1.12.0
+* scipy: 1.16.2
 <!-- WHEEL_VERSIONS_END -->
 
 psycopg3-c is just the sdist of psycopg3-binary
@@ -244,6 +255,20 @@ psycopg3-c is just the sdist of psycopg3-binary
   * This is the commit that is currently used by wasix-libc
 * compiler-rt: wasix-org/llvm-project 6bb93a243f6d15855f485f5aec3810d9e2de150d
   * This is the commit that is currently used by wasix-libc
+* cpython: wasix-org/cpython feat/dl
+* libb2: 0.98.1
+* zstd: 1.5.7
+* jq: 1.8.1
+* onigurama: 6.9.10
+* xxhash: 0.8.3
+* lz4: 1.10.0
+* snappy: 1.2.2
+* lzo: 2.10
+  * Unofficial github mirror, because upstream only provides tarballs. Last release in 2017.
+* gmp: 6.3
+  * Unofficial github mirror, because upstream uses mercurial
+* ca-certificates: wasix-org/python-wasix-binaries
+  * For now this is just copied in from python-wasix-binaries
 <!-- LIB_VERSIONS_END -->
 
 ## Tests
