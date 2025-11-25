@@ -343,3 +343,6 @@
 	path = pkgs/sed.source
 	url = https://github.com/mirror/sed.git
 
+[submodule "pkgs/greenlet.source"]
+	path = pkgs/greenlet.source
+	url = https://github.com/wasix-org/greenlet

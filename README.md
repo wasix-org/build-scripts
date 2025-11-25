@@ -204,6 +204,7 @@ Here is a list of the versions of the wheels and libraries that are included in 
 * python-lz4: 4.4.4
 * fastavro: 1.12.0
 * scipy: 1.16.2
+* greenlet: wasix-org/greenlet main
 <!-- WHEEL_VERSIONS_END -->
 
 psycopg3-c is just the sdist of psycopg3-binary
