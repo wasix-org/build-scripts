@@ -1,8 +1,23 @@
 import unittest
 import requests
+import socket
+import pytest
 
 BASE_URL = "https://httpbin.org"
 
+
+def _has_network() -> bool:
+    try:
+        socket.getaddrinfo("httpbin.org", 443)
+        return True
+    except Exception:
+        return False
+
+
+HAS_NET = _has_network()
+
+
+@pytest.mark.skipif(not HAS_NET, reason="Network restricted in test environment")
 class TestRequestsModule(unittest.TestCase):
 
     def test_get_request(self):

@@ -282,6 +282,60 @@ psycopg3-c is just the sdist of psycopg3-binary
 * sed: 4.9
 <!-- LIB_VERSIONS_END -->
 
+## Tests
+
+The whole point of these tests is to ensure that the packages works within the wasmer runtime.
+So there are two ways of running the tests, natively and with wasmer:
+
+### Native
+
+Requirements:
+
+- Python 3.13
+- `python -m venv env`
+- `source venv/bin/activate`
+- `pip install .`
+- `pip install pytest`
+
+I'm sure it's possible to do via uv, or poetry, or many other ways. But this works also.
+
+Run tests:
+
+- `python -m pytest`
+- Discovers files matching `*-test.py`, `*_test.py`, and `test_*.py` under `tests/`.
+- Files ending with `.skip.py` are ignored.
+- Files ending with `-broken.py` are marked as expected failures (strict). If they pass, the run reports XPASS and fails.
+
+### Wasmer
+
+These are the instructions as of 2025-10, but there's a shipit looming, which may optimize the flow.
+
+Requirements:
+
+- wasmer 6.1.0-rc.3+
+
+Run tests:
+
+- `cd testing`
+- `uv pip compile pyproject.toml --python-version=3.13 --universal --extra-index-url https://pythonindex.wasix.org/simple --index-url=https://pypi.org/simple --emit-index-url --only-binary :all: -o wasmer-requirements.txt`
+- `uvx pip install -r wasmer-requirements.txt --target wasix-site-packages --platform wasix_wasm32 --only-binary=:all: --python-version=3.13 --compile`
+- `TEST_DIR=../tests/ wasmer run . --registry=wasmer.wtf --net --forward-host-env`
+- `curl localhost:8081/check`
+
+This will run all tests via fastapi.
+
+You may also run each test individually by:
+
+- `curl localhost:8081/list`
+- `curl localhost:8081/check/<test-file>`
+
+This is needed when testing on edge, since `.../check` times out the workload.
+In conjunction with this, there is a convenience script which runs all tests each in a separate query.
+
+So you may also run `./run-all-tests-via-api.py --host <hostname> --port <port>`.
+If you need to hit a specific IP while preserving the original hostname (e.g., for edge testing or custom DNS), use `--resolve-ip <ip>` which is SNI-compatible for HTTPS and sets the HTTP `Host` header accordingly.
+This is intended to be run to validate package functionaltiy on edge, as each test becomes a separate workload.
+
 ### Notes
 
 All built library packages should include a pkg-config file for each library.

@@ -18,3 +18,5 @@ __pycache__
 /pkgs/*.build
 /pkgs/*.prepared
 /pkgs/*.sysroot
+wasix-site-packages
+wasmer-requirements.txt

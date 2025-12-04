@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wasmer-build-scripts"
+version = "0.0.0"
+description = "Test scaffolding for build-scripts; runs tests via pytest."
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [{ name = "Wasmer contributors" }]
+dependencies = [
+  "annotated-types",
+  "brotlicffi",
+  "certifi",
+  "cffi",
+  "charset-normalizer",
+  "cryptography",
+  "google-crc32c",
+  "fastapi",
+  "idna",
+  "jiter",
+  "lxml",
+  "MarkupSafe",
+  "msgpack",
+  "mysqlclient",
+  "numpy",
+  "orjson",
+  "pandas",
+  "Pillow",
+  "protobuf",
+  "psycopg[binary]",
+  "pycparser",
+  "pycryptodome",
+  "pycryptodomex",
+  "pydantic>=2",
+  "PyNaCl",
+  "pyOpenSSL",
+  "pypandoc",
+  "pypng",
+  "pyzbar",
+  "qrcode",
+  "regex",
+  "requests",
+  "rpds-py",
+  "shapely",
+  "six",
+  "tiktoken",
+  "typing-inspection",
+  "typing_extensions",
+  "tzdata",
+  "urllib3",
+  "uvloop",
+  "uvicorn>=0.35.0",
+  "python-dateutil",
+  "psycopg",
+  "psycopg_pool",
+  "pytz",
+  "PyYAML",
+  "svgwrite",
+]
+
+[tool.setuptools.packages.find]
+include = []
+exclude = ["*"]
+
+
+[tool.pytest.ini_options]
+python_files = ["*-test.py", "*_test.py", "test_*.py"]
+addopts = ["-q"]
+testpaths = ["tests"]

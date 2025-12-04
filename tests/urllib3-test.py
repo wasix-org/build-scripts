@@ -1,8 +1,22 @@
 import unittest
 import urllib3
 import certifi
+import socket
+import pytest
 from urllib3.exceptions import MaxRetryError, NameResolutionError
 
+def _has_network() -> bool:
+    try:
+        socket.getaddrinfo("httpbin.org", 443)
+        return True
+    except Exception:
+        return False
+
+
+HAS_NET = _has_network()
+
+
+@pytest.mark.skipif(not HAS_NET, reason="Network restricted in test environment")
 class TestUrllib3Basic(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

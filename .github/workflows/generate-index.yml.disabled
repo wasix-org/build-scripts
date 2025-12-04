@@ -74,3 +74,17 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
+
+  test:
+    strategy:
+      matrix:
+        python-version: ["3.13"]
+        wasmer-version: ["v6.1.0-rc.3"]
+    uses: ./.github/workflows/test-python-index.yaml
+    with:
+      python-version: ${{ matrix.python-version }}
+      wasmer-version: ${{ matrix.wasmer-version }}
+      # Test primary python index only for now. This
+      # setup allows for hosting a separate "testing" python
+      # index down the line (or simply a local one)
+      python-index: https://pythonindex.wasix.org
